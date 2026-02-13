@@ -103,17 +103,68 @@ footer {
     transform: translateY(0);
   }
 }
+/* الخلفية المعتمة */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+/* الكارد */
+.modal-content {
+  background: #111;
+  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid #333;
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-content h3 {
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  margin-top: 20px;
+  cursor: pointer;
+  color: #aaa;
+}
 
 </style>
 
 </head>
 
 <body>
+<div class="modal" id="contactModal">
+  <div class="modal-content">
+    <h3>تواصل معي</h3>
+    <p>📧 mohamed2005122@gmail.com</p>
+    <p>💬 واتساب: ضع رقمك هنا</p>
+    <p class="close-btn" onclick="closeModal()">إغلاق</p>
+  </div>
+</div>
+
+<script>
+function openModal() {
+  document.getElementById("contactModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("contactModal").style.display = "none";
+}
+</script>
 
 <div class="hero">
   <h1>Mohamed Frame Vision</h1>
   <p class="subtitle">مونتاج احترافي يعكس هوية علامتك</p>
-  <a class="btn" href="#contact">تواصل الآن</a>
+<a class="btn" onclick="openModal()">تواصل الآن</a>
 </div>
 
 <div class="section">
@@ -126,12 +177,6 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 allowfullscreen>
 </iframe>
   </div>
-</div>
-
-<div class="section" id="contact">
-  <h2>تواصل</h2>
-  <p>📧 mohamed2005122@gmail.com</p>
-  <p>💬 واتساب: ضع رقمك هنا</p>
 </div>
 
 <footer>
