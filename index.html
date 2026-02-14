@@ -21,6 +21,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
+  margin-top: 80px;
 }
 
 h1 {
@@ -164,6 +165,35 @@ footer {
   color: #777;
   letter-spacing: 1px;
 }
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px 0;
+  z-index: 1000;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+
+.nav a:hover {
+  color: #aaa;
+}
+  
+.nav a.active {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 5px;
+}
 
 /* تحسين الموبايل */
 @media (max-width: 768px) {
@@ -198,12 +228,48 @@ footer {
   .modal-content {
     padding: 30px 20px;
   }
+  .nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px 0;
+  z-index: 1000;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+
+.nav a:hover {
+  color: #aaa;
+}
+.nav a.active {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 5px;
+}
+
 }
 </style>
 
 </head>
 
 <body>
+  <div class="nav">
+  <a href="index.html" class="active">الرئيسية</a>
+  <a href="about.html">عنّي</a>
+  <a href="services.html">خدماتي</a>
+  <a href="blog.html">المدونة</a>
+</div>
+  
 <div class="modal" id="contactModal">
   <div class="modal-content">
     <h3>تواصل معي</h3>
@@ -233,7 +299,7 @@ function closeModal() {
 <a class="btn" onclick="openModal()">تواصل الآن</a>
 </div>
 
-<div class="+section">
+<div class="section">
   <h2>أعمالي</h2>
 
   <div class="video-block">
