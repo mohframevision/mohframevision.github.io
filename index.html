@@ -128,6 +128,34 @@ footer {
   cursor: pointer;
   color: #aaa;
 }
+  .video-block {
+  max-width: 900px;
+  margin: 80px auto;
+}
+
+.video-block iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transition: transform 0.4s ease;
+}
+
+.video-block {
+  transition: transform 0.4s ease;
+}
+
+.video-block:hover {
+  transform: scale(1.02);
+}
+  
+.video-title {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #aaa;
+}
+
 /* تحسين الموبايل */
 @media (max-width: 768px) {
 .section {
@@ -161,24 +189,7 @@ footer {
   .modal-content {
     padding: 30px 20px;
   }
-
-.video-block {
-  max-width: 900px;
-  margin: 80px auto;
 }
-
-.video-block iframe {
-  width: 100%;
-  height: 500px;
-  border-radius: 12px;
-}
-
-.video-title {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #aaa;
-}
-
 </style>
 
 </head>
