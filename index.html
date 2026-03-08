@@ -1,331 +1,124 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mohamed Frame Vision</title>
-
-<style>
-body {
-  margin: 0;
-  background-color: #0b0b0b;
-  color: white;
-  font-family: 'Georgia', serif;
-  direction: rtl;
-}
-
-.hero {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin-top: 80px;
-}
-
-h1 {
-  font-size: 64px;
-  font-weight: 400;
-  letter-spacing: 4px;
-}
-
-.subtitle {
-  font-size: 22px;
-  color: #999;
-  max-width: 600px;
-  line-height: 1.6;
-}
-
-.btn {
-  padding: 14px 40px;
-  border: 1px solid #999;
-  text-decoration: none;
-  color: white;
-  transition: 0.4s;
-  letter-spacing: 1px;
-}
-
-.btn:hover {
-  background: white;
-  color: black;
-}
-
-.section {
-  padding: 80px 20px;
-  text-align: center;
-}
-
-.section h2 {
-  margin-bottom: 40px;
-  font-size: 32px;
-}
-
-footer {
-  text-align: center;
-  padding: 40px;
-  color: #777;
-  font-size: 14px;
-}
-  .hero {
-  animation: fadeIn 1.5s ease forwards;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.section {
-  animation: fadeUp 1.2s ease forwards;
-  opacity: 0;
-  transform: translateY(30px);
-  animation-delay: 0.5s;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* الخلفية المعتمة */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-
-/* الكارد */
-.modal-content {
-  background: #111;
-  padding: 40px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  border: 1px solid #333;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-  animation: fadeIn 0.4s ease;
-}
-
-.modal-content h3 {
-  margin-bottom: 20px;
-}
-
-.close-btn {
-  margin-top: 20px;
-  cursor: pointer;
-  color: #aaa;
-}
-  .video-block {
-  max-width: 900px;
-  margin: 80px auto;
-}
-
-.video-block iframe {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  transition: transform 0.4s ease;
-}
-
-.video-block {
-  transition: transform 0.4s ease;
-}
-
-.video-block:hover {
-  transform: scale(1.02);
-}
+  <!-- الإعدادات الأساسية -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-.video-title {
-  margin-top: 20px;
-  font-size: 20px;
-  color: #aaa;
-}
-.en-sub {
-  display: block;
-  margin-top: 10px;
-  font-size: 16px;
-  color: #777;
-  letter-spacing: 1px;
-}
-.nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  padding: 20px 0;
-  z-index: 1000;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 2px;
-  transition: 0.3s;
-}
-
-.nav a:hover {
-  color: #aaa;
-}
+  <!-- SEO Meta Tags -->
+  <title>Mohamed Frame Vision | محمد فريم فيجن - مونتاج احترافي</title>
+  <meta name="description" content="محمد فريم فيجن - محرر فيديو متخصص في صناعة محتوى سوشيال ميديا بأسلوب بصري فاخر للعلامات التجارية. Premium video editing for social brands.">
+  <meta name="keywords" content="مونتاج, محمد فريم فيجن, video editing, social media, مونتير, محرر فيديو, مصمم, محتوى بصري">
+  <meta name="author" content="Mohamed Frame Vision">
+  <meta name="robots" content="index, follow">
   
-.nav a.active {
-  border-bottom: 1px solid #aaa;
-  padding-bottom: 5px;
-}
-
-/* تحسين الموبايل */
-@media (max-width: 768px) {
-.section {
-  padding: 60px 15px;
-}
-
-.video-container {
-  padding: 0 10px;
-}
-
-.btn {
-  width: 80%;
-  max-width: 280px;
-}
-
-  h1 {
-    font-size: 38px;
-    letter-spacing: 2px;
-  }
-
-  .subtitle {
-    font-size: 18px;
-    padding: 0 20px;
-  }
-
-  .hero {
-    height: 80vh;
-    padding: 0 20px;
-  }
-
-  .modal-content {
-    padding: 30px 20px;
-  }
-  .nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  padding: 20px 0;
-  z-index: 1000;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 2px;
-  transition: 0.3s;
-}
-
-.nav a:hover {
-  color: #aaa;
-}
-.nav a.active {
-  border-bottom: 1px solid #aaa;
-  padding-bottom: 5px;
-}
-
-}
-</style>
-
+  <!-- Open Graph Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mohamed Frame Vision - مونتاج احترافي">
+  <meta property="og:description" content="مونتاج احترافي يعكس هوية علامتك - Premium Video Editing for Social Brands">
+  <meta property="og:url" content="https://mohframevision.github.io">
+  <meta property="og:site_name" content="Mohamed Frame Vision">
+  <meta property="og:locale" content="ar_AR">
+  
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mohamed Frame Vision - مونتاج احترافي">
+  <meta name="twitter:description" content="مونتاج احترافي يعكس هوية علامتك">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.svg">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-  <div class="nav">
-  <a href="index.html" class="active">الرئيسية</a>
-  <a href="about.html">عنّي</a>
-  <a href="services.html">خدماتي</a>
-  <a href="blog.html">المدونة</a>
-</div>
-  
-<div class="modal" id="contactModal">
-  <div class="modal-content">
-    <h3>تواصل معي</h3>
-    <p>📧 mohamed2005122@gmail.com</p>
-    <p>https://linktr.ee/f5r.tr</p>
-    <p class="close-btn" onclick="closeModal()">إغلاق</p>
-  </div>
-</div>
+  <!-- شريط التنقل -->
+  <nav class="nav">
+    <a href="index.html" class="active">الرئيسية</a>
+    <a href="about.html">عنّي</a>
+    <a href="projects.html">المشاريع</a>
+    <a href="skills.html">المهارات</a>
+    <a href="services.html">الخدمات</a>
+    <a href="contact.html">تواصل</a>
+  </nav>
 
-<script>
-function openModal() {
-  document.getElementById("contactModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("contactModal").style.display = "none";
-}
-</script>
-
-<div class="hero">
-  <h1>Mohamed Frame Vision</h1>
-<p class="subtitle">
-مونتاج احترافي يعكس هوية علامتك
-<span class="en-sub">Premium Video Editing for Social Brands</span>
-</p>
-<p>The website is under development, and many sections will be added.</p>
-<a class="btn" onclick="openModal()">تواصل الآن</a>
-</div>
-
-<div class="section">
-  <h2>أعمالي</h2>
-
-  <div class="video-block">
-    <iframe src="https://www.youtube.com/embed/symsPVXeHso?rel=0&modestbranding=1"
-    allowfullscreen></iframe>
-    <p class="video-title">فيلم قصير</p>
+  <!-- النافذة المنبثقة للتواصل -->
+  <div class="modal" id="contactModal">
+    <div class="modal-content">
+      <h3>تواصل معي</h3>
+      <p>📧 mohamed2005122@gmail.com</p>
+      <p>🔗 <a href="https://linktr.ee/f5r.tr" target="_blank" style="color: #aaa; border: none; padding: 0;">linktr.ee/f5r.tr</a></p>
+      <p class="close-btn" onclick="closeModal()">إغلاق</p>
+    </div>
   </div>
 
-  <div class="video-block">
-    <iframe src="https://www.youtube.com/embed/7fmxawblyUA?rel=0&modestbranding=1"
-    allowfullscreen></iframe>
-    <p class="video-title">مراجعة لشاشة من ديفو</p>
+  <!-- قسم Hero -->
+  <div class="hero">
+    <h1>Mohamed Frame Vision</h1>
+    <p class="subtitle">
+      مونتاج احترافي يعكس هوية علامتك
+      <span class="en-sub">Premium Video Editing for Social Brands</span>
+    </p>
+    <p style="color: #777; font-size: 14px; margin-top: 20px;">
+      The website is under development, and many sections will be added.
+    </p>
+    <a class="btn" onclick="openModal()">تواصل الآن</a>
   </div>
 
-  <div class="video-block">
-    <iframe src="https://www.youtube.com/embed/PHSY6rlljSM?rel=0&modestbranding=1"
-    allowfullscreen></iframe>
-    <p class="video-title">من صورة إلى فيديو: تجربة سريعة بين Blender و الذكاء الاصطناعي
-</p>
-  </div>
+  <!-- قسم الأعمال -->
+  <section class="section">
+    <h2>أعمالي</h2>
 
-</div>
+    <!-- فيديو 1 - مع Lazy Loading -->
+    <div class="video-block">
+      <iframe 
+        data-src="https://www.youtube.com/embed/symsPVXeHso?rel=0&modestbranding=1"
+        allowfullscreen
+        title="فيلم قصير"
+        loading="lazy">
+      </iframe>
+      <p class="video-title">فيلم قصير</p>
+    </div>
 
-<footer>
-  © 2026 Mohamed Frame Vision
-</footer>
+    <!-- فيديو 2 -->
+    <div class="video-block">
+      <iframe 
+        data-src="https://www.youtube.com/embed/7fmxawblyUA?rel=0&modestbranding=1"
+        allowfullscreen
+        title="مراجعة لشاشة من ديفو"
+        loading="lazy">
+      </iframe>
+      <p class="video-title">مراجعة لشاشة من ديفو</p>
+    </div>
 
+    <!-- فيديو 3 -->
+    <div class="video-block">
+      <iframe 
+        data-src="https://www.youtube.com/embed/PHSY6rlljSM?rel=0&modestbranding=1"
+        allowfullscreen
+        title="من صورة إلى فيديو: تجربة سريعة بين Blender و الذكاء الاصطناعي"
+        loading="lazy">
+      </iframe>
+      <p class="video-title">من صورة إلى فيديو: تجربة سريعة بين Blender و الذكاء الاصطناعي</p>
+    </div>
+
+    <!-- زر لعرض المزيد -->
+    <a href="projects.html" class="btn" style="margin-top: 40px;">عرض جميع المشاريع</a>
+  </section>
+
+  <!-- التذييل -->
+  <footer>
+    <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+    <p style="margin-top: 10px; color: #555;">
+      <a href="contact.html" style="color: #777; border: none; padding: 0;">تواصل معنا</a> | 
+      <a href="about.html" style="color: #777; border: none; padding: 0;">عن الموقع</a>
+    </p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <!-- الإعدادات الأساسية -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>تواصل معنا - Mohamed Frame Vision</title>
+  <meta name="description" content="تواصل معي لمناقشة مشروعك القادم في مجال تحرير الفيديو وصناعة المحتوى.">
+  <meta name="keywords" content="تواصل, مراسلة, contact, email">
+  
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="تواصل مع Mohamed Frame Vision">
+  <meta property="og:description" content="تواصل معي لمناقشة مشروعك">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <!-- شريط التنقل -->
+  <nav class="nav">
+    <a href="index.html">الرئيسية</a>
+    <a href="about.html">عنّي</a>
+    <a href="projects.html">المشاريع</a>
+    <a href="skills.html">المهارات</a>
+    <a href="services.html">الخدمات</a>
+    <a href="contact.html" class="active">تواصل</a>
+  </nav>
+
+  <!-- قسم التواصل -->
+  <section class="section" style="padding-top: 120px; min-height: 100vh;">
+    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 20px;">تواصل معي</h1>
+    <p style="max-width: 600px; margin: 0 auto 50px; color: #aaa;">
+      لديك مشروع؟ أريد أن أسمع عنه! املأ النموذج أدناه أو تواصل معي مباشرة
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1000px; margin: 0 auto;">
+      <!-- نموذج التواصل -->
+      <div>
+        <form id="contactForm" class="contact-form">
+          <div class="form-group">
+            <label for="name">الاسم *</label>
+            <input type="text" id="name" name="name" required placeholder="اسمك الكريم">
+          </div>
+
+          <div class="form-group">
+            <label for="email">البريد الإلكتروني *</label>
+            <input type="email" id="email" name="email" required placeholder="example@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">موضوع الرسالة</label>
+            <input type="text" id="subject" name="subject" placeholder="ما هو موضوع رسالتك؟">
+          </div>
+
+          <div class="form-group">
+            <label for="message">الرسالة *</label>
+            <textarea id="message" name="message" required placeholder="اكتب رسالتك هنا..."></textarea>
+          </div>
+
+          <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">إرسال الرسالة</button>
+        </form>
+      </div>
+
+      <!-- معلومات التواصل المباشر -->
+      <div style="text-align: center;">
+        <div style="background: #111; padding: 40px; border: 1px solid #222; border-radius: 12px;">
+          <h3 style="font-size: 24px; margin-bottom: 30px;">طرق التواصل المباشر</h3>
+          
+          <div style="margin: 25px 0; padding: 20px; background: #0b0b0b; border-radius: 8px;">
+            <p style="font-size: 40px; margin-bottom: 10px;">📧</p>
+            <p style="color: #aaa; margin-bottom: 5px;">البريد الإلكتروني</p>
+            <a href="mailto:mohamed2005122@gmail.com" style="color: white; text-decoration: none; border: none; padding: 0;">
+              mohamed2005122@gmail.com
+            </a>
+          </div>
+
+          <div style="margin: 25px 0; padding: 20px; background: #0b0b0b; border-radius: 8px;">
+            <p style="font-size: 40px; margin-bottom: 10px;">🔗</p>
+            <p style="color: #aaa; margin-bottom: 5px;">روابط التواصل</p>
+            <a href="https://linktr.ee/f5r.tr" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
+              linktr.ee/f5r.tr
+            </a>
+          </div>
+
+          <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #222;">
+            <p style="color: #888; font-size: 14px; line-height: 1.8;">
+              أعد بالرد خلال 24 ساعة<br>
+              من الأحد إلى الخميس
+            </p>
+          </div>
+        </div>
+
+        <!-- أزرار إضافية -->
+        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="projects.html" class="btn">شاهد أعمالي</a>
+          <a href="services.html" class="btn">الخدمات</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- التذييل -->
+  <footer>
+    <p>&copy; 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+    <p style="margin-top: 10px; color: #555;">
+      <a href="about.html" style="color: #777; border: none; padding: 0;">عن الموقع</a> | 
+      <a href="index.html" style="color: #777; border: none; padding: 0;">الرئيسية</a>
+    </p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>

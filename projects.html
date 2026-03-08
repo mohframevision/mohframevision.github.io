@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <!-- الإعدادات الأساسية -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>المشاريع - Mohamed Frame Vision</title>
+  <meta name="description" content="استعرض أعمالي ومشاريعي في مجال تحرير الفيديو وصناعة المحتوى البصري.">
+  <meta name="keywords" content="مشاريع, مونتاج, فيديوهات, portfolio, projects">
+  
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="مشاريع Mohamed Frame Vision">
+  <meta property="og:description" content="استعرض أعمالي ومشاريعي">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <style>
+    /* أنماط إضافية للفلترة */
+    .project-card {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- شريط التنقل -->
+  <nav class="nav">
+    <a href="index.html">الرئيسية</a>
+    <a href="about.html">عنّي</a>
+    <a href="projects.html" class="active">المشاريع</a>
+    <a href="skills.html">المهارات</a>
+    <a href="services.html">الخدمات</a>
+    <a href="contact.html">تواصل</a>
+  </nav>
+
+  <!-- قسم المشاريع -->
+  <section class="section" style="padding-top: 120px;">
+    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 20px;">مشاريعي</h1>
+    <p style="max-width: 700px; margin: 0 auto 40px; color: #aaa;">
+      مجموعة مختارة من أعمالي في مجال تحرير الفيديو وصناعة المحتوى
+    </p>
+
+    <!-- أزرار الفلترة -->
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">الكل</button>
+      <button class="filter-btn" data-filter="commercial">محتوى تجاري</button>
+      <button class="filter-btn" data-filter="shortfilm">أفلام قصيرة</button>
+      <button class="filter-btn" data-filter="review">مراجعات</button>
+      <button class="filter-btn" data-filter="creative">محتوى إبداعي</button>
+    </div>
+
+    <!-- شبكة المشاريع -->
+    <div class="projects-grid">
+      <!-- مشروع 1 -->
+      <div class="project-card" data-category="shortfilm">
+        <div class="video-block" style="margin: 0;">
+          <iframe 
+            data-src="https://www.youtube.com/embed/symsPVXeHso?rel=0&modestbranding=1"
+            allowfullscreen
+            title="فيلم قصير"
+            loading="lazy"
+            style="border-radius: 12px 12px 0 0;">
+          </iframe>
+        </div>
+        <h3>فيلم قصير</h3>
+        <p>فيلم قصير يروي قصة مؤثرة بأسلوب سينمائي متقن</p>
+      </div>
+
+      <!-- مشروع 2 -->
+      <div class="project-card" data-category="review">
+        <div class="video-block" style="margin: 0;">
+          <iframe 
+            data-src="https://www.youtube.com/embed/7fmxawblyUA?rel=0&modestbranding=1"
+            allowfullscreen
+            title="مراجعة لشاشة من ديفو"
+            loading="lazy"
+            style="border-radius: 12px 12px 0 0;">
+          </iframe>
+        </div>
+        <h3>مراجعة لشاشة من ديفو</h3>
+        <p>مراجعة احترافية لشاشة بأسلوب مشوق وجذاب</p>
+      </div>
+
+      <!-- مشروع 3 -->
+      <div class="project-card" data-category="creative">
+        <div class="video-block" style="margin: 0;">
+          <iframe 
+            data-src="https://www.youtube.com/embed/PHSY6rlljSM?rel=0&modestbranding=1"
+            allowfullscreen
+            title="من صورة إلى فيديو"
+            loading="lazy"
+            style="border-radius: 12px 12px 0 0;">
+          </iframe>
+        </div>
+        <h3>من صورة إلى فيديو</h3>
+        <p>تجربة سريعة بين Blender والذكاء الاصطناعي</p>
+      </div>
+
+      <!-- مشاريع إضافية (يمكن إضافة المزيد) -->
+      <div class="project-card" data-category="commercial">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+          🎥
+        </div>
+        <h3>محتوى تجاري</h3>
+        <p>محتوى تسويقي لعلامة تجارية - قريبًا</p>
+      </div>
+
+      <div class="project-card" data-category="commercial">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #111 0%, #222 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+          📱
+        </div>
+        <h3>محتوى سوشيال ميديا</h3>
+        <p>محتوى إبداعي لمنصات التواصل الاجتماعي - قريبًا</p>
+      </div>
+
+      <div class="project-card" data-category="creative">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+          ✨
+        </div>
+        <h3>محتوى إبداعي</h3>
+        <p>تجارب إبداعية في عالم الفيديو والمونتاج - قريبًا</p>
+      </div>
+    </div>
+
+    <!-- زر التواصل -->
+    <a href="contact.html" class="btn" style="margin-top: 60px;">هل لديك مشروع؟ تواصل معي</a>
+  </section>
+
+  <!-- التذييل -->
+  <footer>
+    <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+    <p style="margin-top: 10px; color: #555;">
+      <a href="contact.html" style="color: #777; border: none; padding: 0;">تواصل معنا</a> | 
+      <a href="index.html" style="color: #777; border: none; padding: 0;">الرئيسية</a>
+    </p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>

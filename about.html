@@ -1,71 +1,79 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>عنّي - Mohamed Frame Vision</title>
-
-<style>
-body {
-  margin: 0;
-  background-color: #0b0b0b;
-  color: white;
-  font-family: 'Georgia', serif;
-  direction: rtl;
-  text-align: center;
-}
-
-.section {
-  padding: 100px 20px;
-  max-width: 800px;
-  margin: auto;
-}
-
-h1 {
-  font-size: 42px;
-  margin-bottom: 40px;
-}
-
-p {
-  line-height: 1.8;
-  color: #aaa;
-}
-
-a {
-  color: white;
-  text-decoration: none;
-  border: 1px solid #444;
-  padding: 10px 25px;
-  display: inline-block;
-  margin-top: 40px;
-  transition: 0.3s;
-}
-
-a:hover {
-  background: white;
-  color: black;
-}
-</style>
-
+  <!-- الإعدادات الأساسية -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>عنّي - Mohamed Frame Vision</title>
+  <meta name="description" content="محرر فيديو متخصص في صناعة محتوى سوشيال ميديا بأسلوب بصري فاخر. أركز على تحويل اللقطات الخام إلى تجربة بصرية تعكس هوية العلامة.">
+  <meta name="keywords" content="عن محمد فريم فيجن, about, video editor, مونتير, محرر فيديو">
+  <meta name="author" content="Mohamed Frame Vision">
+  
+  <!-- Open Graph Tags -->
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="عنّي - Mohamed Frame Vision">
+  <meta property="og:description" content="محرر فيديو متخصص في صناعة محتوى سوشيال ميديا">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
+  <!-- شريط التنقل -->
+  <nav class="nav">
+    <a href="index.html">الرئيسية</a>
+    <a href="about.html" class="active">عنّي</a>
+    <a href="projects.html">المشاريع</a>
+    <a href="skills.html">المهارات</a>
+    <a href="services.html">الخدمات</a>
+    <a href="contact.html">تواصل</a>
+  </nav>
 
-<div class="section">
-  <h1>عنّي</h1>
-  <p>
-  أنا محرر فيديو متخصص في صناعة محتوى سوشيال ميديا بأسلوب بصري فاخر.
-  أركز على تحويل اللقطات الخام إلى تجربة بصرية تعكس هوية العلامة.
-  </p>
+  <!-- قسم عنّي -->
+  <div class="section" style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center;">
+    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 40px;">عنّي</h1>
+    
+    <div style="max-width: 700px; margin: 0 auto;">
+      <p style="font-size: clamp(18px, 4vw, 22px); line-height: 2; margin-bottom: 30px; color: #ccc;">
+        أنا محرر فيديو متخصص في صناعة محتوى سوشيال ميديا بأسلوب بصري فاخر.
+        أركز على تحويل اللقطات الخام إلى تجربة بصرية تعكس هوية العلامة.
+      </p>
 
-  <p>
-  <span style="color:#777;">
-  Video editor focused on premium social media storytelling.
-  </span>
-  </p>
+      <p style="font-size: clamp(16px, 3.5vw, 20px); line-height: 1.9; margin-bottom: 25px; color: #aaa;">
+        أعمل على إنتاج محتوى يجمع بين الإبداع والاحترافية، 
+        مع الاهتمام بأدق التفاصيل لضمان تقديم منتج نهائي يفوق التوقعات.
+      </p>
 
-  <a href="index.html">العودة للرئيسية</a>
-</div>
+      <p style="color: #888; font-size: clamp(14px, 3vw, 18px); line-height: 1.8; margin-top: 30px; font-style: italic;">
+        <span style="color:#777;">
+          Video editor focused on premium social media storytelling.
+        </span>
+      </p>
 
+      <!-- الأزرار -->
+      <div style="margin-top: 50px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <a href="projects.html" class="btn">شاهد أعمالي</a>
+        <a href="contact.html" class="btn">تواصل معي</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- التذييل -->
+  <footer>
+    <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+    <p style="margin-top: 10px; color: #555;">
+      <a href="contact.html" style="color: #777; border: none; padding: 0;">تواصل معنا</a> | 
+      <a href="index.html" style="color: #777; border: none; padding: 0;">الرئيسية</a>
+    </p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/script.js"></script>
 </body>
 </html>
