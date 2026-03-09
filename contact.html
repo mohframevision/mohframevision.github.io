@@ -44,10 +44,24 @@
     <div style="display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1000px; margin: 0 auto;">
       <!-- نموذج التواصل -->
       <div>
-        <form id="contactForm" class="contact-form">
+        <!-- رسائل النجاح والخطأ -->
+        <div id="formMessage" style="display: none; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;"></div>
+        
+        <form id="contactForm" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <!-- Web3Forms Access Key - يجب استبداله بالمفتاح الخاص بك -->
+          <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+          
+          <!-- إعدادات Web3Forms -->
+          <input type="hidden" name="subject" value="رسالة جديدة من موقع Mohamed Frame Vision">
+          <input type="hidden" name="from_name" value="Mohamed Frame Vision Contact Form">
+          <input type="hidden" name="redirect" value="https://web3forms.com/success">
+          
+          <!-- Honeypot للحماية من السبام -->
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          
           <div class="form-group">
             <label for="name">الاسم *</label>
-            <input type="text" id="name" name="name" required placeholder="اسمك الكريم">
+            <input type="text" id="name" name="name" required placeholder="اسمك الكريم" minlength="2" maxlength="100">
           </div>
 
           <div class="form-group">
@@ -56,16 +70,19 @@
           </div>
 
           <div class="form-group">
-            <label for="subject">موضوع الرسالة</label>
-            <input type="text" id="subject" name="subject" placeholder="ما هو موضوع رسالتك؟">
+            <label for="subject_text">موضوع الرسالة</label>
+            <input type="text" id="subject_text" name="subject_text" placeholder="ما هو موضوع رسالتك؟" maxlength="200">
           </div>
 
           <div class="form-group">
             <label for="message">الرسالة *</label>
-            <textarea id="message" name="message" required placeholder="اكتب رسالتك هنا..."></textarea>
+            <textarea id="message" name="message" required placeholder="اكتب رسالتك هنا..." minlength="10" maxlength="5000"></textarea>
           </div>
 
-          <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">إرسال الرسالة</button>
+          <button type="submit" id="submitBtn" class="btn" style="width: 100%; margin-top: 10px;">
+            <span id="btnText">إرسال الرسالة</span>
+            <span id="btnLoading" style="display: none;">جاري الإرسال...</span>
+          </button>
         </form>
       </div>
 
@@ -77,8 +94,8 @@
           <div style="margin: 25px 0; padding: 20px; background: #0b0b0b; border-radius: 8px;">
             <p style="font-size: 40px; margin-bottom: 10px;">📧</p>
             <p style="color: #aaa; margin-bottom: 5px;">البريد الإلكتروني</p>
-            <a href="mailto:mohframevision@outlook.com" style="color: white; text-decoration: none; border: none; padding: 0;">
-              mohframevision@outlook.com
+            <a href="mailto:mohamed2005122@gmail.com" style="color: white; text-decoration: none; border: none; padding: 0;">
+              mohamed2005122@gmail.com
             </a>
           </div>
 

@@ -115,21 +115,123 @@ function filterProjects(category) {
 }
 
 // ===== معالجة نموذج التواصل =====
-function handleContactForm(event) {
+async function handleContactForm(event) {
   event.preventDefault();
   
   const form = event.target;
-  const name = form.querySelector('[name="name"]').value;
-  const email = form.querySelector('[name="email"]').value;
-  const message = form.querySelector('[name="message"]').value;
+  const formMessage = document.getElementById('formMessage');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  const btnLoading = document.getElementById('btnLoading');
   
-  // يمكن هنا إضافة كود لإرسال البيانات إلى الخادم
-  // في الوقت الحالي، سنعرض رسالة نجاح
+  // التحقق من صحة الحقول
+  if (!validateContactForm(form)) {
+    return false;
+  }
   
-  alert('شكراً لتواصلك! سأرد عليك في أقرب وقت ممكن.');
-  form.reset();
+  // إظهار حالة التحميل
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoading) btnLoading.style.display = 'inline';
+  }
+  
+  // إخفاء أي رسالة سابقة
+  if (formMessage) {
+    formMessage.style.display = 'none';
+  }
+  
+  try {
+    const formData = new FormData(form);
+    
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      // نجاح الإرسال
+      showFormMessage('success', '✅ تم إرسال رسالتك بنجاح! سأرد عليك في أقرب وقت ممكن.');
+      form.reset();
+    } else {
+      // فشل الإرسال
+      showFormMessage('error', '❌ عذراً، حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى أو التواصل عبر البريد الإلكتروني مباشرة.');
+    }
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    showFormMessage('error', '❌ عذراً، حدث خطأ في الاتصال. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+  } finally {
+    // إعادة تفعيل الزر
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (btnText) btnText.style.display = 'inline';
+      if (btnLoading) btnLoading.style.display = 'none';
+    }
+  }
   
   return false;
+}
+
+// ===== التحقق من صحة نموذج التواصل =====
+function validateContactForm(form) {
+  const name = form.querySelector('[name="name"]');
+  const email = form.querySelector('[name="email"]');
+  const message = form.querySelector('[name="message"]');
+  
+  // التحقق من الاسم
+  if (name && name.value.trim().length < 2) {
+    showFormMessage('error', '❌ يرجى إدخال اسم صحيح (على الأقل حرفين).');
+    name.focus();
+    return false;
+  }
+  
+  // التحقق من البريد الإلكتروني
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email && !emailRegex.test(email.value.trim())) {
+    showFormMessage('error', '❌ يرجى إدخال بريد إلكتروني صحيح.');
+    email.focus();
+    return false;
+  }
+  
+  // التحقق من الرسالة
+  if (message && message.value.trim().length < 10) {
+    showFormMessage('error', '❌ يرجى كتابة رسالة أطول (على الأقل 10 أحرف).');
+    message.focus();
+    return false;
+  }
+  
+  return true;
+}
+
+// ===== عرض رسائل النموذج =====
+function showFormMessage(type, message) {
+  const formMessage = document.getElementById('formMessage');
+  if (!formMessage) return;
+  
+  formMessage.textContent = message;
+  formMessage.style.display = 'block';
+  
+  if (type === 'success') {
+    formMessage.style.background = 'rgba(16, 185, 129, 0.1)';
+    formMessage.style.border = '1px solid #10b981';
+    formMessage.style.color = '#10b981';
+  } else {
+    formMessage.style.background = 'rgba(239, 68, 68, 0.1)';
+    formMessage.style.border = '1px solid #ef4444';
+    formMessage.style.color = '#ef4444';
+  }
+  
+  // التمرير إلى الرسالة
+  formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+  // إخفاء رسالة النجاح تلقائياً بعد 10 ثواني
+  if (type === 'success') {
+    setTimeout(() => {
+      formMessage.style.display = 'none';
+    }, 10000);
+  }
 }
 
 // ===== تأثيرات التمرير =====
@@ -262,5 +364,7 @@ window.portfolioFunctions = {
   openModal,
   closeModal,
   filterProjects,
-  handleContactForm
+  handleContactForm,
+  validateContactForm,
+  showFormMessage
 };
