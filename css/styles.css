@@ -833,13 +833,32 @@ img[loading="lazy"].loaded {
   left: 20px;
   font-size: 56px;
   font-weight: bold;
-color: #00d4ff;
-text-shadow: 
-  0 0 5px #00d4ff,
-  0 0 10px #00d4ff,
-  0 0 20px #00d4ff;
-   line-height: 1;
+  color: #00d4ff;
+  text-shadow: 
+    0 0 10px #00d4ff,
+    0 0 20px #00d4ff,
+    0 0 40px #00d4ff;
+  line-height: 1;
   font-family: 'Arial', sans-serif;
+  
+  /* كود الحركة */
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px #00d4ff,
+      0 0 20px #00d4ff,
+      0 0 40px #00d4ff;
+  }
+  50% {
+    text-shadow: 
+      0 0 20px #00d4ff,
+      0 0 40px #00d4ff,
+      0 0 60px #00d4ff,
+      0 0 80px #00d4ff;
+  }
 }
 
 .tip-card h3 {
