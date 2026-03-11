@@ -827,11 +827,14 @@ img[loading="lazy"].loaded {
   transform: scaleY(1);
 }
 
+/* ================================= */
+/* رقم النصيحة - متجاوب ومتوهج */
+/* ================================= */
 .tip-number {
   position: absolute;
   top: 15px;
   left: 20px;
-  font-size: 56px;
+  font-size: clamp(32px, 8vw, 56px); /* حجم متجاوب */
   font-weight: bold;
   color: #00d4ff;
   text-shadow: 
@@ -839,24 +842,36 @@ img[loading="lazy"].loaded {
     0 0 10px #00d4ff;
   line-height: 1;
   font-family: 'Arial', sans-serif;
-  
-  /* كود الحركة - أبطأ */
-  animation: pulse 7s ease-in-out infinite;
+  animation: pulse 7s ease-in-out infinite; /* حافظت على 7 ثواني */
+  z-index: 1;
+  opacity: 0.6;
 }
 
 @keyframes pulse {
   0%, 100% {
     text-shadow: 
       0 0 5px #00d4ff,
-      0 0 5px #00d4ff;
+      0 0 10px #00d4ff;
   }
   50% {
     text-shadow: 
-      0 0 5px #00d4ff,
-      0 0 5px #00d4ff;
+      0 0 10px #00d4ff,
+      0 0 20px #00d4ff;
   }
 }
 
+/* ================================= */
+/* البطاقة - أضفنا مساحة للرقم */
+/* ================================= */
+.tip-card {
+  position: relative;
+  padding-left: 80px; /* مساحة للرقم */
+  min-height: 120px;
+}
+
+/* ================================= */
+/* تنسيقات النص (الكود الأصلي الخاص بك) */
+/* ================================= */
 .tip-card h3 {
   font-size: 20px;
   margin-bottom: 15px;
@@ -868,6 +883,39 @@ img[loading="lazy"].loaded {
   color: #999;
   font-size: 15px;
   line-height: 1.9;
+}
+
+/* ================================= */
+/* للجوال - الشاشات الصغيرة */
+/* ================================= */
+@media (max-width: 768px) {
+  .tip-number {
+    position: relative;
+    top: 0;
+    left: 0;
+    font-size: 40px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  
+  .tip-card {
+    padding-left: 20px;
+    text-align: center;
+  }
+}
+
+/* ================================= */
+/* للشاشات الكبيرة جداً */
+/* ================================= */
+@media (min-width: 1200px) {
+  .tip-number {
+    font-size: 64px;
+    left: 30px;
+  }
+  
+  .tip-card {
+    padding-left: 100px;
+  }
 }
 
 /* ===== بطاقات الكورسات ===== */
