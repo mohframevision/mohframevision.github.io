@@ -844,7 +844,7 @@ img[loading="lazy"].loaded {
   font-family: 'Arial', sans-serif;
   animation: pulse 7s ease-in-out infinite; /* حافظت على 7 ثواني */
   z-index: 1;
-  opacity: 0.6;
+  opacity: 1.0;
 }
 
 @keyframes pulse {
