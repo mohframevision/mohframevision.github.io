@@ -841,19 +841,19 @@ img[loading="lazy"].loaded {
   font-family: 'Arial', sans-serif;
   
   /* كود الحركة - أبطأ */
-  animation: pulse 4s ease-in-out infinite;
+  animation: pulse 7s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%, 100% {
     text-shadow: 
       0 0 5px #00d4ff,
-      0 0 10px #00d4ff;
+      0 0 5px #00d4ff;
   }
   50% {
     text-shadow: 
-      0 0 10px #00d4ff,
-      0 0 20px #00d4ff;
+      0 0 5px #00d4ff,
+      0 0 5px #00d4ff;
   }
 }
 
