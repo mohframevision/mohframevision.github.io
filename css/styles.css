@@ -835,9 +835,9 @@ img[loading="lazy"].loaded {
   font-weight: bold;
 color: #00d4ff;
 text-shadow: 
+  0 0 5px #00d4ff,
   0 0 10px #00d4ff,
-  0 0 20px #00d4ff,
-  0 0 40px #00d4ff;
+  0 0 20px #00d4ff;
    line-height: 1;
   font-family: 'Arial', sans-serif;
 }
