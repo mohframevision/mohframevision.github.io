@@ -51,6 +51,7 @@
     <a href="projects.html">المشاريع</a>
     <a href="skills.html">المهارات</a>
     <a href="resources.html" class="active">موارد مفيدة</a>
+    <a href="naqsh.html">نقش ستوديو</a>
     <a href="services.html">الخدمات</a>
     <a href="contact.html">تواصل</a>
   </nav>
@@ -64,10 +65,19 @@
       مجموعة شاملة من المواقع، التطبيقات، المنتجات، والمقالات المفيدة للجميع؛ لصناع المحتوى، المحترفين، الطلاب، والمهتمين بتطوير مهاراتهم وإثراء تجاربهم الرقمية.
     </p>
 
+    <!-- روابط تنقل سريعة بين الأقسام -->
+    <div class="filter-buttons" style="margin-bottom: 60px;">
+      <a href="#sites" class="pill-link" style="text-decoration: none; display: inline-block;">🌐 مواقع مفيدة</a>
+      <a href="#creators" class="pill-link" style="text-decoration: none; display: inline-block;">👥 صناع محتوى</a>
+      <a href="#tips" class="pill-link" style="text-decoration: none; display: inline-block;">💡 نصائح</a>
+      <a href="#courses" class="pill-link" style="text-decoration: none; display: inline-block;">📚 كورسات</a>
+      <a href="#tools" class="pill-link" style="text-decoration: none; display: inline-block;">🎨 أدوات</a>
+    </div>
+
     <!-- ======================================== -->
     <!-- القسم الأول: مواقع مفيدة -->
     <!-- ======================================== -->
-    <div class="resource-section">
+    <div class="resource-section" id="sites">
       <h2 class="resource-section-title">
         <span>🌐</span> مواقع مفيدة
       </h2>
@@ -130,19 +140,34 @@
 Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع الإبداعية</p>
           <span class="resource-link">زيارة الموقع ←</span>
         </a>
-        
+
+        <!-- أضف مواقع جديدة هنا -->
+        <a href="https://coverr.co" target="_blank" class="resource-card">
+          <div class="resource-card-icon">🎞️</div>
+          <h3>Coverr</h3>
+          <p>فيديوهات ستوك سينمائية منسّقة يدوياً، مجانية بالكامل للاستخدام الشخصي والتجاري</p>
+          <span class="resource-link">زيارة الموقع ←</span>
+        </a>
+
       </div>
     </div>
 
     <!-- ======================================== -->
     <!-- القسم الثاني: صناع محتوى موصى بهم -->
     <!-- ======================================== -->
-    <div class="resource-section">
+    <div class="resource-section" id="creators">
       <h2 class="resource-section-title">
         <span>👥</span> صناع محتوى موصى بهم
       </h2>
       <p class="resource-section-desc">قنوات وحسابات ملهمة على يوتيوب وإنستغرام وتويتر</p>
-      
+
+      <!-- فلترة حسب المنصة -->
+      <div class="filter-buttons">
+        <button class="pill-link platform-filter-btn active" data-platform-filter="all">الكل</button>
+        <button class="pill-link platform-filter-btn" data-platform-filter="youtube">🎥 يوتيوب</button>
+        <button class="pill-link platform-filter-btn" data-platform-filter="instagram">📸 إنستغرام</button>
+      </div>
+
       <div class="resources-grid">
         <!-- 
         =============================================
@@ -173,19 +198,19 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
         </a>
         
         <!-- مثال 3: حساب إنستغرام - إلهام تصميم -->
-        <a href="https://www.youtube.com/@zakariabenkabouche/videos" target="_blank" class="resource-card" data-platform="instagram">
-          <div class="resource-card-icon">📸</div>
+        <a href="https://www.youtube.com/@zakariabenkabouche/videos" target="_blank" class="resource-card" data-platform="youtube">
+          <div class="resource-card-icon">🎥</div>
           <h3>Zakaria Benkabouche</h3>
           <p>القناة تحتوي على مقطع فيديو واحد فقط، لكنك لن تصدق عينيك.</p>
-          <span class="resource-link">زيارة الحساب ←</span>
+          <span class="resource-link">زيارة القناة ←</span>
         </a>
         
         <!-- أضف صناع محتوى جدد هنا -->
-        <a href="https://www.youtube.com/@MOHFRAMEVISION" target="_blank" class="resource-card" data-platform="instagram">
-          <div class="resource-card-icon">📸</div>
+        <a href="https://www.youtube.com/@MOHFRAMEVISION" target="_blank" class="resource-card" data-platform="youtube">
+          <div class="resource-card-icon">🎥</div>
           <h3>Mohammed frame vision</h3>
-          <p>قناتي</p>
-          <span class="resource-link">زيارة الحساب ←</span>
+          <p>قناتي على يوتيوب — أعمال مونتاج ومحتوى بصري</p>
+          <span class="resource-link">زيارة القناة ←</span>
         </a>
 
          <!-- أضف صناع محتوى جدد هنا -->
@@ -196,20 +221,35 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
           <span class="resource-link">زيارة الحساب ←</span>
         </a>
 
-         <a href="https://www.youtube.com/@zanehoyer" target="_blank" class="resource-card" data-platform="instagram">
-          <div class="resource-card-icon">📸</div>
+         <a href="https://www.youtube.com/@zanehoyer" target="_blank" class="resource-card" data-platform="youtube">
+          <div class="resource-card-icon">🎥</div>
           <h3>Zane Hoyer</h3>
           <p>هذا الرجل يصنع رسوما متحركة مذهلة في DaVinci Resolve أنصحك بمتابعته إذا كنت مهتما بإنشاء أعمال مماثلة</p>
-          <span class="resource-link">زيارة الحساب ←</span>
+          <span class="resource-link">زيارة القناة ←</span>
         </a>
-        
+
+        <!-- أضف صناع محتوى جدد هنا -->
+        <a href="https://www.youtube.com/@CaseyFaris" target="_blank" class="resource-card" data-platform="youtube">
+          <div class="resource-card-icon">🎥</div>
+          <h3>Casey Faris</h3>
+          <p>قناة ضخمة (+250 ألف مشترك) متخصصة في دروس DaVinci Resolve وتصحيح الألوان ومونتاج الفيديو</p>
+          <span class="resource-link">زيارة القناة ←</span>
+        </a>
+
+        <a href="https://www.youtube.com/@CullenKelly" target="_blank" class="resource-card" data-platform="youtube">
+          <div class="resource-card-icon">🎥</div>
+          <h3>Cullen Kelly</h3>
+          <p>كولوريست محترف ومعلّم معتمد رسمياً من Blackmagic، متخصص في تدريج الألوان الاحترافي</p>
+          <span class="resource-link">زيارة القناة ←</span>
+        </a>
+
       </div>
     </div>
 
     <!-- ======================================== -->
     <!-- القسم الثالث: نصائح وإرشادات -->
     <!-- ======================================== -->
-    <div class="resource-section">
+    <div class="resource-section" id="tips">
       <h2 class="resource-section-title">
         <span>💡</span> نَصائِح وإرْشادات
       </h2>
@@ -274,7 +314,7 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
     <!-- ======================================== -->
     <!-- القسم الرابع: كورسات ومصادر تعليمية -->
     <!-- ======================================== -->
-    <div class="resource-section">
+    <div class="resource-section" id="courses">
       <h2 class="resource-section-title">
         <span>📚</span> كورسات ومصادر تعليمية
       </h2>
@@ -295,31 +335,31 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
         -->
         
         <!-- كورس 1: للمبتدئين -->
-        <a href="ستتم الاضافة قريباً" target="_blank" class="resource-card course-card" data-level="beginner">
+        <div class="resource-card course-card" data-level="beginner" style="cursor: default;">
           <div class="resource-card-icon">📖</div>
           <h3>أساسيات المونتاج</h3>
           <p>تعلم أساسيات المونتاج من الصفر مع تطبيقات عملية</p>
           <span class="course-level">مبتدئ</span>
-          <span class="resource-link">ابدأ التعلم ←</span>
-        </a>
-        
+          <span class="resource-link">🔜 قريباً</span>
+        </div>
+
         <!-- كورس 2: متوسط -->
-        <a href="ستتم الاضافة قريباً" target="_blank" class="resource-card course-card" data-level="intermediate">
+        <div class="resource-card course-card" data-level="intermediate" style="cursor: default;">
           <div class="resource-card-icon">🎯</div>
           <h3>تقنيات المونتاج المتقدمة</h3>
           <p>إتقان التأثيرات البصرية وتصحيح الألوان الاحترافي</p>
           <span class="course-level">متوسط</span>
-          <span class="resource-link">ابدأ التعلم ←</span>
-        </a>
-        
+          <span class="resource-link">🔜 قريباً</span>
+        </div>
+
         <!-- كورس 3: متقدم -->
-        <a href="ستتم الاضافة قريباً" target="_blank" class="resource-card course-card" data-level="advanced">
+        <div class="resource-card course-card" data-level="advanced" style="cursor: default;">
           <div class="resource-card-icon">🚀</div>
           <h3>موشن جرافيك احترافي</h3>
           <p>إنشاء رسوم متحركة وتأثيرات بصرية معقدة</p>
           <span class="course-level">متقدم</span>
-          <span class="resource-link">ابدأ التعلم ←</span>
-        </a>
+          <span class="resource-link">🔜 قريباً</span>
+        </div>
         
         <!-- أضف كورسات جديدة هنا -->
         
@@ -329,7 +369,7 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
     <!-- ======================================== -->
     <!-- القسم الخامس: أدوات مجانية -->
     <!-- ======================================== -->
-    <div class="resource-section">
+    <div class="resource-section" id="tools">
       <h2 class="resource-section-title">
         <span>🎨</span> أدوات وبرامج مجانية
       </h2>
@@ -384,7 +424,16 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
           <span class="tool-type">برنامج</span>
           <span class="resource-link">تحميل مجاني ←</span>
         </a>
-        
+
+        <!-- أضف أدوات جديدة هنا -->
+        <a href="https://www.blender.org" target="_blank" class="resource-card tool-card">
+          <div class="resource-card-icon">🧊</div>
+          <h3>Blender</h3>
+          <p>برنامج مجاني ومفتوح المصدر للنمذجة ثلاثية الأبعاد والأنيميشن والرندر</p>
+          <span class="tool-type">برنامج</span>
+          <span class="resource-link">تحميل مجاني ←</span>
+        </a>
+
       </div>
     </div>
 
@@ -413,6 +462,9 @@ Milanote هي أداة سهلة الاستخدام لتنظيم المشاريع
       - ممنوع الاستخدام التجاري
     </p>
   </footer>
+
+  <!-- زر العودة للأعلى -->
+  <button id="scrollToTop" aria-label="العودة للأعلى">↑</button>
 
   <!-- JavaScript -->
   <script src="js/script.min.js"></script>

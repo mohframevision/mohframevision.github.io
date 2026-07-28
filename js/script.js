@@ -114,6 +114,21 @@ function filterProjects(category) {
   });
 }
 
+// ===== فلترة صناع المحتوى حسب المنصة =====
+function filterCreators(platform) {
+  const cards = document.querySelectorAll('#creators .resource-card[data-platform]');
+  const buttons = document.querySelectorAll('.platform-filter-btn');
+
+  buttons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.platformFilter === platform);
+  });
+
+  cards.forEach(card => {
+    const match = platform === 'all' || card.dataset.platform === platform;
+    card.style.display = match ? '' : 'none';
+  });
+}
+
 // ===== معالجة نموذج التواصل =====
 async function handleContactForm(event) {
   event.preventDefault();
@@ -341,6 +356,14 @@ document.addEventListener('DOMContentLoaded', function() {
       filterProjects(btn.dataset.filter);
     });
   });
+
+  // تهيئة أزرار فلترة صناع المحتوى
+  const platformButtons = document.querySelectorAll('.platform-filter-btn');
+  platformButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterCreators(btn.dataset.platformFilter);
+    });
+  });
 });
 
 // ===== معالجة الأخطاء العامة =====
@@ -364,6 +387,7 @@ window.portfolioFunctions = {
   openModal,
   closeModal,
   filterProjects,
+  filterCreators,
   handleContactForm,
   validateContactForm,
   showFormMessage

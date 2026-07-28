@@ -474,7 +474,8 @@ footer {
   margin: 30px 0;
 }
 
-.filter-btn {
+.filter-btn,
+.pill-link {
   padding: 10px 25px;
   background: transparent;
   border: 1px solid #444;
@@ -487,7 +488,9 @@ footer {
 }
 
 .filter-btn:hover,
-.filter-btn.active {
+.filter-btn.active,
+.pill-link:hover,
+.pill-link.active {
   background: white;
   color: black;
   border-color: white;
@@ -642,6 +645,47 @@ img[loading="lazy"].loaded {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  scroll-margin-top: 100px;
+}
+
+/* ===== زر العودة للأعلى ===== */
+#scrollToTop {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 48px;
+  height: 48px;
+  line-height: 46px;
+  text-align: center;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333;
+  color: #fff;
+  font-size: 20px;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  cursor: pointer;
+  z-index: 900;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+#scrollToTop:hover {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  transform: translateY(-3px);
+}
+
+@media (max-width: 480px) {
+  #scrollToTop {
+    bottom: 20px;
+    left: 20px;
+    width: 42px;
+    height: 42px;
+  }
 }
 
 .resource-section:first-of-type {
