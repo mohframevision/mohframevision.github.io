@@ -498,6 +498,36 @@ footer {
   color: #4ecdc4;
 }
 
+.resource-disclaimer-toggle {
+  display: none;
+  margin-top: 12px;
+  background: transparent;
+  border: none;
+  color: #4ecdc4;
+  cursor: pointer;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 13px;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* على الهاتف: نطوي الرسالة ونعرض زر "اقرأ المزيد" */
+@media (max-width: 600px) {
+  .resource-disclaimer-toggle {
+    display: inline-block;
+  }
+
+  .resource-disclaimer-body {
+    max-height: 78px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .resource-disclaimer-body.expanded {
+    max-height: 600px;
+  }
+}
+
 /* ===== خانة بحث الموارد ===== */
 .resource-search-wrap {
   position: relative;

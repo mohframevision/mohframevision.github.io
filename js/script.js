@@ -455,6 +455,18 @@ function initLazyImages() {
   }
 }
 
+// ===== طي/فتح تنويه الروابط الخارجية على الهاتف =====
+function initDisclaimerToggle() {
+  const toggle = document.getElementById('disclaimerToggle');
+  const body = document.getElementById('disclaimerBody');
+  if (!toggle || !body) return;
+
+  toggle.addEventListener('click', () => {
+    const expanded = body.classList.toggle('expanded');
+    toggle.textContent = expanded ? 'اقرأ أقل ▴' : 'اقرأ المزيد ▾';
+  });
+}
+
 // ===== زر العودة للأعلى =====
 function initScrollToTop() {
   const scrollBtn = document.getElementById('scrollToTop');
@@ -498,6 +510,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // تفعيل زر العودة للأعلى
   initScrollToTop();
+
+  // تفعيل طي/فتح تنويه الروابط الخارجية
+  initDisclaimerToggle();
   
   // معالجة نموذج التواصل
   const contactForm = document.getElementById('contactForm');
