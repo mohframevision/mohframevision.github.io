@@ -1,0 +1,26 @@
+[
+  {
+    "title": "فيلم قصير",
+    "description": "فيلم قصير يروي قصة مؤثرة بأسلوب سينمائي متقن",
+    "category": "shortfilm",
+    "youtubeId": "symsPVXeHso"
+  },
+  {
+    "title": "مراجعة لشاشة من ديفو",
+    "description": "مراجعة احترافية لشاشة بأسلوب مشوق وجذاب",
+    "category": "review",
+    "youtubeId": "7fmxawblyUA"
+  },
+  {
+    "title": "من صورة إلى فيديو",
+    "description": "تجربة سريعة بين Blender والذكاء الاصطناعي",
+    "category": "creative",
+    "youtubeId": "PHSY6rlljSM"
+  },
+  {
+    "title": "In my garage",
+    "description": "مشهد ثلاثي الأبعاد برندر Cycles في Blender",
+    "category": "creative",
+    "youtubeId": "0sEytyJcjXw"
+  }
+]

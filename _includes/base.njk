@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <!-- الإعدادات الأساسية -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO Meta Tags -->
+  <title>{{ title }}</title>
+  {% if not skipMeta %}
+  {% if canonical == "" %}
+  <link rel="canonical" href="{{ site.url }}/">
+  {% else %}
+  <link rel="canonical" href="{{ site.url }}/{{ canonical }}">
+  {% endif %}
+  {% endif %}
+  {% if description %}<meta name="description" content="{{ description }}">{% endif %}
+  {% if keywords %}<meta name="keywords" content="{{ keywords }}">{% endif %}
+  {% if author %}<meta name="author" content="{{ author }}">{% endif %}
+  <meta name="robots" content="{{ robotsMeta or "index, follow" }}">
+
+  {% if not skipMeta %}
+  <!-- Open Graph Tags -->
+  <meta property="og:type" content="{{ ogType or "website" }}">
+  <meta property="og:title" content="{{ ogTitle or title }}">
+  <meta property="og:description" content="{{ ogDescription or description }}">
+  {% if canonical == "" %}
+  <meta property="og:url" content="{{ site.url }}">
+  {% else %}
+  <meta property="og:url" content="{{ site.url }}/{{ canonical }}">
+  {% endif %}
+  {% if siteName %}
+  <meta property="og:site_name" content="Mohamed Frame Vision">
+  <meta property="og:locale" content="ar_AR">
+  {% endif %}
+  <meta property="og:image" content="{{ ogImage or site.defaultOgImage }}">
+  <meta property="og:image:width" content="{{ ogImageWidth or 1200 }}">
+  <meta property="og:image:height" content="{{ ogImageHeight or 630 }}">
+  {% endif %}
+
+  {% if twitterCard %}
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="{{ twitterCard }}">
+  <meta name="twitter:title" content="{{ twitterTitle or ogTitle or title }}">
+  <meta name="twitter:description" content="{{ twitterDescription or ogDescription or description }}">
+  <meta name="twitter:image" content="{{ twitterImage or ogImage or site.defaultOgImage }}">
+  {% endif %}
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  {% if extraIcon %}<link rel="alternate icon" href="favicon.svg">{% endif %}
+
+  {% if youtubePreconnect %}
+  <!-- تسريع تحميل فيديوهات يوتيوب -->
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  {% endif %}
+
+  <!-- خط عربي احترافي -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.min.css">
+
+  {% if schemaJSON %}
+  <!-- بيانات منظمة لمحركات البحث (Schema.org) -->
+  <script type="application/ld+json">
+  {{ schemaJSON | safe }}
+  </script>
+  {% endif %}
+</head>
+
+<body>
+  <!-- شريط التنقل -->
+  <nav class="nav">
+    {% for item in site.nav %}
+    <a href="{{ item.href }}"{% if item.href == navActive %} class="active"{% endif %}>{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+
+  {{ content | safe }}
+
+  <!-- التذييل -->
+  <footer{% if footerFixed %} style="position: fixed; bottom: 0; width: 100%; background: transparent; border-top: none;"{% endif %}>
+    {% if footerFixed %}
+    <p>&copy; 2026 Mohamed Frame Vision</p>
+    {% else %}
+    <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+    <p style="margin-top: 10px; color: #555; font-size: 13px;">
+      <a href="contact.html" style="color: #777; border: none; padding: 0;">تواصل معنا</a> |
+      <a href="about.html" style="color: #777; border: none; padding: 0;">عن الموقع</a>
+    </p>
+    <p style="margin-top: 15px; color: #666; font-size: 11px;">
+      📜 المحتوى مرخص تحت
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+         target="_blank"
+         style="color: #4ecdc4; text-decoration: none;">
+        CC BY-NC-SA 4.0
+      </a>
+      - ممنوع الاستخدام التجاري
+    </p>
+    {% endif %}
+  </footer>
+
+  <!-- زر العودة للأعلى -->
+  <button id="scrollToTop" aria-label="العودة للأعلى">↑</button>
+
+  <!-- JavaScript -->
+  <script src="js/script.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+backend:
+  name: github
+  repo: mohframevision/mohframevision.github.io
+  branch: main
+
+site_url: https://mohframevision.github.io
+logo_url: https://mohframevision.github.io/favicon.svg
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "projects"
+    label: "المشاريع (صفحة المشاريع)"
+    label_singular: "مشروع"
+    folder: "content/projects"
+    create: true
+    slug: "{{fields.category}}-{{slug}}"
+    format: "json"
+    fields:
+      - { label: "العنوان", name: "title", widget: "string" }
+      - { label: "الوصف", name: "description", widget: "text" }
+      - label: "التصنيف"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "محتوى تجاري", value: "commercial" }
+          - { label: "أفلام قصيرة", value: "shortfilm" }
+          - { label: "مراجعات", value: "review" }
+          - { label: "محتوى إبداعي", value: "creative" }
+      - label: "معرّف فيديو يوتيوب"
+        name: "youtubeId"
+        widget: "string"
+        hint: "الجزء اللي بعد v= في رابط اليوتيوب، مثال: symsPVXeHso"
+
+  - name: "pages"
+    label: "صفحات الموقع"
+    label_singular: "صفحة"
+    format: "yaml-frontmatter"
+    files:
+      - name: "home"
+        label: "الرئيسية"
+        file: "pages/index.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "index.html" }
+          - { name: "navActive", widget: "hidden", default: "index.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { name: "author", widget: "hidden", default: "Mohamed Frame Vision" }
+          - { name: "robotsMeta", widget: "hidden", default: "index, follow" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { name: "siteName", widget: "hidden", default: true }
+          - { name: "twitterCard", widget: "hidden", default: "summary_large_image" }
+          - { name: "twitterTitle", widget: "hidden" }
+          - { name: "twitterDescription", widget: "hidden" }
+          - { name: "extraIcon", widget: "hidden", default: true }
+          - { name: "youtubePreconnect", widget: "hidden", default: true }
+          - { name: "schemaJSON", widget: "hidden" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }
+
+      - name: "about"
+        label: "عنّي"
+        file: "pages/about.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "about.html" }
+          - { name: "navActive", widget: "hidden", default: "about.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "about.html" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { name: "author", widget: "hidden", default: "Mohamed Frame Vision" }
+          - { name: "ogType", widget: "hidden", default: "profile" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }
+
+      - name: "services"
+        label: "الخدمات"
+        file: "pages/services.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "services.html" }
+          - { name: "navActive", widget: "hidden", default: "services.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "services.html" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }
+
+      - name: "skills"
+        label: "المهارات"
+        file: "pages/skills.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "skills.html" }
+          - { name: "navActive", widget: "hidden", default: "skills.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "skills.html" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }
+
+      - name: "naqsh"
+        label: "نقش ستوديو"
+        file: "pages/naqsh.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "naqsh.html" }
+          - { name: "navActive", widget: "hidden", default: "naqsh.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "naqsh.html" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { name: "author", widget: "hidden", default: "Mohamed Frame Vision" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { name: "siteName", widget: "hidden", default: true }
+          - { name: "ogImage", widget: "hidden", default: "https://mohframevision.github.io/images/naqsh/naqsh-hero.jpg" }
+          - { name: "ogImageWidth", widget: "hidden", default: 1600 }
+          - { name: "ogImageHeight", widget: "hidden", default: 900 }
+          - { name: "twitterCard", widget: "hidden", default: "summary_large_image" }
+          - { name: "twitterTitle", widget: "hidden" }
+          - { name: "twitterDescription", widget: "hidden" }
+          - { name: "twitterImage", widget: "hidden", default: "https://mohframevision.github.io/images/naqsh/naqsh-hero.jpg" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }
+
+      - name: "contact"
+        label: "تواصل"
+        file: "pages/contact.njk"
+        fields:
+          - { name: "layout", widget: "hidden", default: "base.njk" }
+          - { name: "permalink", widget: "hidden", default: "contact.html" }
+          - { name: "navActive", widget: "hidden", default: "contact.html" }
+          - { label: "عنوان الصفحة (Tab)", name: "title", widget: "string" }
+          - { name: "canonical", widget: "hidden", default: "contact.html" }
+          - { label: "وصف السيو", name: "description", widget: "text" }
+          - { name: "keywords", widget: "hidden" }
+          - { label: "عنوان المشاركة (OG)", name: "ogTitle", widget: "string" }
+          - { label: "وصف المشاركة (OG)", name: "ogDescription", widget: "text" }
+          - { label: "محتوى الصفحة (HTML)", name: "body", widget: "code", default_language: "html" }

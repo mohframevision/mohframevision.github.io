@@ -1,0 +1,75 @@
+---
+layout: base.njk
+permalink: projects.html
+navActive: projects.html
+title: "المشاريع - Mohamed Frame Vision"
+canonical: "projects.html"
+description: "استعرض أعمالي ومشاريعي في مجال تحرير الفيديو وصناعة المحتوى البصري."
+keywords: "مشاريع, مونتاج, فيديوهات, portfolio, projects"
+ogTitle: "مشاريع Mohamed Frame Vision"
+ogDescription: "استعرض أعمالي ومشاريعي"
+youtubePreconnect: true
+---
+  <!-- قسم المشاريع -->
+  <section class="section" style="padding-top: 120px;">
+    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 20px;">مشاريعي</h1>
+    <p style="max-width: 700px; margin: 0 auto 40px; color: #aaa;">
+      مجموعة مختارة من أعمالي في مجال تحرير الفيديو وصناعة المحتوى
+    </p>
+
+    <!-- أزرار الفلترة -->
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">الكل</button>
+      <button class="filter-btn" data-filter="commercial">محتوى تجاري</button>
+      <button class="filter-btn" data-filter="shortfilm">أفلام قصيرة</button>
+      <button class="filter-btn" data-filter="review">مراجعات</button>
+      <button class="filter-btn" data-filter="creative">محتوى إبداعي</button>
+    </div>
+
+    <!-- شبكة المشاريع -->
+    <div class="projects-grid">
+      {% for p in projectList %}
+      <div class="project-card" data-category="{{ p.category }}">
+        <div class="video-block" style="margin: 0;">
+          <iframe
+            data-src="https://www.youtube.com/embed/{{ p.youtubeId }}?rel=0&modestbranding=1"
+            allowfullscreen
+            title="{{ p.title }}"
+            loading="lazy"
+            style="border-radius: 12px 12px 0 0;">
+          </iframe>
+        </div>
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.description }}</p>
+      </div>
+      {% endfor %}
+
+      <!-- مشاريع إضافية (يمكن إضافة المزيد) -->
+      <div class="project-card" data-category="commercial">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+         !
+        </div>
+        <h3>قريباً</h3>
+        <p>قيد التطوير</p>
+      </div>
+
+      <div class="project-card" data-category="commercial">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #111 0%, #222 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+          📱
+        </div>
+        <h3>قريباً</h3>
+        <p>قيد التطوير</p>
+      </div>
+
+      <div class="project-card" data-category="creative">
+        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
+          ✨
+        </div>
+        <h3>قريباً</h3>
+        <p>قيد التطوير</p>
+      </div>
+    </div>
+
+    <!-- زر التواصل -->
+    <a href="contact.html" class="btn" style="margin-top: 60px;">هل لديك مشروع؟ تواصل معي</a>
+  </section>
