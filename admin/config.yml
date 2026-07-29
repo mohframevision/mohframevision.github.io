@@ -33,6 +33,39 @@ collections:
         widget: "string"
         hint: "الجزء اللي بعد v= في رابط اليوتيوب، مثال: symsPVXeHso"
 
+  - name: "resources"
+    label: "الموارد المفيدة (صفحة موارد مفيدة)"
+    label_singular: "مورد"
+    folder: "content/resources"
+    create: true
+    slug: "{{fields.category}}-{{slug}}"
+    format: "json"
+    fields:
+      - { label: "العنوان", name: "title", widget: "string" }
+      - { label: "الرابط", name: "url", widget: "string" }
+      - label: "التصنيف"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "مواقع مفيدة", value: "sites" }
+          - { label: "مواقع فيديو مجانية (Stock)", value: "stock" }
+          - { label: "صناع محتوى", value: "creators" }
+          - { label: "ملحقات (Plugins)", value: "plugins" }
+          - { label: "قوالب ألوان (LUTs)", value: "luts" }
+          - { label: "منتديات ومجتمعات", value: "communities" }
+          - { label: "أدوات وبرامج", value: "tools" }
+      - { label: "الأيقونة (emoji)", name: "icon", widget: "string", hint: "مثال: 🌐 أو 🎬" }
+      - { label: "الوصف", name: "description", widget: "text" }
+      - label: "منصة (لصناع المحتوى فقط)"
+        name: "platform"
+        widget: "select"
+        required: false
+        options:
+          - { label: "لا يوجد", value: "" }
+          - { label: "يوتيوب", value: "youtube" }
+          - { label: "إنستغرام", value: "instagram" }
+      - { label: "شارة إضافية (اختياري)", name: "badge", widget: "string", required: false, hint: "مثال: 🔗 رابط تسويق بالعمولة" }
+
   - name: "pages"
     label: "صفحات الموقع"
     label_singular: "صفحة"

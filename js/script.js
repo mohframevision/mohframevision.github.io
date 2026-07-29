@@ -114,19 +114,49 @@ function filterProjects(category) {
   });
 }
 
-// ===== فلترة صناع المحتوى حسب المنصة =====
-function filterCreators(platform) {
-  const cards = document.querySelectorAll('#creators .resource-card[data-platform]');
-  const buttons = document.querySelectorAll('.platform-filter-btn');
+// ===== فلترة وبحث الموارد (تعمل معاً: فلتر المنصة + خانة البحث) =====
+let currentPlatformFilter = 'all';
+let currentResourceSearch = '';
 
+function applyResourceFilters() {
+  const grids = document.querySelectorAll('.resources-grid');
+
+  grids.forEach(grid => {
+    let anyVisible = false;
+
+    Array.from(grid.children).forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const matchesSearch = currentResourceSearch === '' || text.includes(currentResourceSearch);
+
+      const cardPlatform = card.dataset.platform;
+      const matchesPlatform = !cardPlatform || currentPlatformFilter === 'all' || cardPlatform === currentPlatformFilter;
+
+      const visible = matchesSearch && matchesPlatform;
+      card.style.display = visible ? '' : 'none';
+      if (visible) anyVisible = true;
+    });
+
+    const section = grid.closest('.resource-section');
+    if (section) {
+      section.style.display = anyVisible ? '' : 'none';
+    }
+  });
+}
+
+function filterCreators(platform) {
+  currentPlatformFilter = platform;
+
+  const buttons = document.querySelectorAll('.platform-filter-btn');
   buttons.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.platformFilter === platform);
   });
 
-  cards.forEach(card => {
-    const match = platform === 'all' || card.dataset.platform === platform;
-    card.style.display = match ? '' : 'none';
-  });
+  applyResourceFilters();
+}
+
+function searchResources(query) {
+  currentResourceSearch = query.trim().toLowerCase();
+  applyResourceFilters();
 }
 
 // ===== معالجة نموذج التواصل =====
@@ -364,6 +394,14 @@ document.addEventListener('DOMContentLoaded', function() {
       filterCreators(btn.dataset.platformFilter);
     });
   });
+
+  // تهيئة خانة بحث الموارد
+  const resourceSearchInput = document.getElementById('resourceSearchInput');
+  if (resourceSearchInput) {
+    resourceSearchInput.addEventListener('input', () => {
+      searchResources(resourceSearchInput.value);
+    });
+  }
 });
 
 // ===== معالجة الأخطاء العامة =====
@@ -388,6 +426,7 @@ window.portfolioFunctions = {
   closeModal,
   filterProjects,
   filterCreators,
+  searchResources,
   handleContactForm,
   validateContactForm,
   showFormMessage

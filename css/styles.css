@@ -465,6 +465,33 @@ footer {
   font-size: clamp(16px, 4vw, 18px);
 }
 
+/* ===== خانة بحث الموارد ===== */
+.resource-search-wrap {
+  max-width: 500px;
+  margin: 0 auto 30px;
+}
+
+.resource-search-input {
+  width: 100%;
+  padding: 14px 20px;
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 30px;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.resource-search-input:focus {
+  border-color: #4ecdc4;
+}
+
+.resource-search-input::placeholder {
+  color: #666;
+}
+
 /* ===== الفلاتر (للمشاريع) ===== */
 .filter-buttons {
   display: flex;
