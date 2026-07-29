@@ -114,9 +114,72 @@ function filterProjects(category) {
   });
 }
 
-// ===== فلترة وبحث الموارد (تعمل معاً: فلتر المنصة + خانة البحث) =====
+// ===== فلترة وبحث الموارد (تعمل معاً: فلتر المنصة + خانة البحث التقريبي) =====
 let currentPlatformFilter = 'all';
 let currentResourceSearch = '';
+
+// توحيد الحروف العربية المتشابهة (همزات، تاء مربوطة، ياء/ألف مقصورة) وحذف التشكيل،
+// عشان البحث يتساهل مع اختلاف طريقة الكتابة
+function normalizeSearchText(str) {
+  return str
+    .toLowerCase()
+    .replace(/[ً-ْٰـ]/g, '') // إزالة التشكيل والتطويل
+    .replace(/[إأآا]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ') // إزالة الرموز والفواصل
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// حساب مسافة التعديل (Levenshtein) بين كلمتين، لقياس مدى تقارب كتابتهما
+function levenshteinDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+
+  let prevRow = new Array(n + 1);
+  let currRow = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prevRow[j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    currRow[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      currRow[j] = Math.min(
+        prevRow[j] + 1,
+        currRow[j - 1] + 1,
+        prevRow[j - 1] + cost
+      );
+    }
+    [prevRow, currRow] = [currRow, prevRow];
+  }
+  return prevRow[n];
+}
+
+// أقصى عدد أخطاء إملائية مسموح به حسب طول الكلمة (كلمة قصيرة = تسامح أقل)
+function fuzzyThreshold(len) {
+  if (len <= 3) return 0;
+  if (len <= 5) return 1;
+  return 2;
+}
+
+function wordRoughlyMatches(queryWord, targetWord) {
+  if (!queryWord || !targetWord) return false;
+  if (targetWord.includes(queryWord) || queryWord.includes(targetWord)) return true;
+  return levenshteinDistance(queryWord, targetWord) <= fuzzyThreshold(queryWord.length);
+}
+
+// يتحقق أن كل كلمة كتبها الزائر تقابلها كلمة قريبة (ولو فيها خطأ إملائي بسيط) في محتوى البطاقة
+function cardMatchesSearch(cardText, rawQuery) {
+  if (!rawQuery) return true;
+
+  const targetWords = normalizeSearchText(cardText).split(' ').filter(Boolean);
+  const queryWords = normalizeSearchText(rawQuery).split(' ').filter(Boolean);
+  if (queryWords.length === 0) return true;
+
+  return queryWords.every(qw => targetWords.some(tw => wordRoughlyMatches(qw, tw)));
+}
 
 function applyResourceFilters() {
   const grids = document.querySelectorAll('.resources-grid');
@@ -125,8 +188,7 @@ function applyResourceFilters() {
     let anyVisible = false;
 
     Array.from(grid.children).forEach(card => {
-      const text = card.textContent.toLowerCase();
-      const matchesSearch = currentResourceSearch === '' || text.includes(currentResourceSearch);
+      const matchesSearch = cardMatchesSearch(card.textContent, currentResourceSearch);
 
       const cardPlatform = card.dataset.platform;
       const matchesPlatform = !cardPlatform || currentPlatformFilter === 'all' || cardPlatform === currentPlatformFilter;
@@ -155,7 +217,7 @@ function filterCreators(platform) {
 }
 
 function searchResources(query) {
-  currentResourceSearch = query.trim().toLowerCase();
+  currentResourceSearch = query.trim();
   applyResourceFilters();
 }
 
@@ -395,11 +457,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // تهيئة خانة بحث الموارد
+  // تهيئة خانة بحث الموارد (مع تأخير بسيط لتحسين الأداء عند زيادة عدد الموارد)
   const resourceSearchInput = document.getElementById('resourceSearchInput');
   if (resourceSearchInput) {
+    let searchDebounceTimer;
     resourceSearchInput.addEventListener('input', () => {
-      searchResources(resourceSearchInput.value);
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        searchResources(resourceSearchInput.value);
+      }, 150);
     });
   }
 });
