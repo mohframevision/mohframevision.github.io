@@ -221,6 +221,70 @@ function searchResources(query) {
   applyResourceFilters();
 }
 
+// ===== القائمة المنسدلة لنتائج البحث (تظهر تحت خانة البحث مباشرة) =====
+const MAX_SEARCH_DROPDOWN_RESULTS = 30;
+
+function updateSearchDropdown(query) {
+  const resultsBox = document.getElementById('resourceSearchResults');
+  if (!resultsBox) return;
+
+  const trimmed = query.trim();
+  resultsBox.innerHTML = '';
+
+  if (!trimmed) {
+    resultsBox.hidden = true;
+    return;
+  }
+
+  const links = document.querySelectorAll('a.resource-card');
+  const matches = [];
+  links.forEach(link => {
+    if (cardMatchesSearch(link.textContent, trimmed)) {
+      const titleEl = link.querySelector('h3');
+      const iconEl = link.querySelector('.resource-card-icon');
+      matches.push({
+        title: titleEl ? titleEl.textContent.trim() : link.textContent.trim(),
+        icon: iconEl ? iconEl.textContent.trim() : '🔗',
+        href: link.getAttribute('href')
+      });
+    }
+  });
+
+  if (matches.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'resource-search-empty';
+    empty.textContent = '😕 لا يوجد — ما لقيت أي نتيجة مطابقة، جرّب كلمة أخرى';
+    resultsBox.appendChild(empty);
+  } else {
+    matches.slice(0, MAX_SEARCH_DROPDOWN_RESULTS).forEach(m => {
+      const item = document.createElement('a');
+      item.className = 'resource-search-result-item';
+      item.href = m.href;
+      item.target = '_blank';
+
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'resource-search-result-icon';
+      iconSpan.textContent = m.icon;
+
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = m.title;
+
+      item.appendChild(iconSpan);
+      item.appendChild(titleSpan);
+      resultsBox.appendChild(item);
+    });
+
+    if (matches.length > MAX_SEARCH_DROPDOWN_RESULTS) {
+      const more = document.createElement('div');
+      more.className = 'resource-search-more';
+      more.textContent = `+ ${matches.length - MAX_SEARCH_DROPDOWN_RESULTS} نتيجة أخرى مطابقة`;
+      resultsBox.appendChild(more);
+    }
+  }
+
+  resultsBox.hidden = false;
+}
+
 // ===== معالجة نموذج التواصل =====
 async function handleContactForm(event) {
   event.preventDefault();
@@ -465,7 +529,24 @@ document.addEventListener('DOMContentLoaded', function() {
       clearTimeout(searchDebounceTimer);
       searchDebounceTimer = setTimeout(() => {
         searchResources(resourceSearchInput.value);
+        updateSearchDropdown(resourceSearchInput.value);
       }, 150);
+    });
+
+    // إعادة إظهار القائمة عند الرجوع للخانة إذا فيها نص
+    resourceSearchInput.addEventListener('focus', () => {
+      if (resourceSearchInput.value.trim()) {
+        updateSearchDropdown(resourceSearchInput.value);
+      }
+    });
+
+    // إخفاء القائمة عند الضغط خارجها
+    document.addEventListener('click', (event) => {
+      const wrap = resourceSearchInput.closest('.resource-search-wrap');
+      const resultsBox = document.getElementById('resourceSearchResults');
+      if (wrap && resultsBox && !wrap.contains(event.target)) {
+        resultsBox.hidden = true;
+      }
     });
   }
 });
@@ -493,6 +574,7 @@ window.portfolioFunctions = {
   filterProjects,
   filterCreators,
   searchResources,
+  updateSearchDropdown,
   handleContactForm,
   validateContactForm,
   showFormMessage

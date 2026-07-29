@@ -500,6 +500,7 @@ footer {
 
 /* ===== خانة بحث الموارد ===== */
 .resource-search-wrap {
+  position: relative;
   max-width: 500px;
   margin: 0 auto 30px;
 }
@@ -523,6 +524,55 @@ footer {
 
 .resource-search-input::placeholder {
   color: #666;
+}
+
+/* قائمة نتائج البحث المنسدلة تحت الخانة */
+.resource-search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  text-align: right;
+}
+
+.resource-search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid #1c1c1c;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.resource-search-result-item:last-child {
+  border-bottom: none;
+}
+
+.resource-search-result-item:hover {
+  background: #1a1a1a;
+}
+
+.resource-search-result-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.resource-search-empty,
+.resource-search-more {
+  padding: 16px 18px;
+  color: #888;
+  font-size: 13.5px;
+  text-align: center;
 }
 
 /* ===== الفلاتر (للمشاريع) ===== */
