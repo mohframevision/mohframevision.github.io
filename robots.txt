@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# لوحة تحكم موقع "هكوله" (مجلد فرعي بنفس النطاق) — ملف robots.txt داخل
+# المجلد الفرعي تتجاهله محركات البحث، فالحظر لازم يكون هنا بالجذر
+Disallow: /hakolah/admin/
+
 Sitemap: https://mohframevision.github.io/sitemap.xml
+# خريطة موقع "هكوله" — نطاق واحد يقدر يعلن أكثر من خريطة، وهذا يخلي قوقل
+# يكتشف صفحات هكوله تلقائياً بدل الاعتماد على الإرسال اليدوي فقط
+Sitemap: https://mohframevision.github.io/hakolah/sitemap.xml
