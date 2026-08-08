@@ -9,5 +9,8 @@ Sitemap: https://mohframevision.github.io/sitemap.xml
 # خريطة موقع "هكوله" — نطاق واحد يقدر يعلن أكثر من خريطة، وهذا يخلي قوقل
 # يكتشف صفحات هكوله تلقائياً بدل الاعتماد على الإرسال اليدوي فقط
 Sitemap: https://mohframevision.github.io/hakolah/sitemap.xml
+# نسخة طبق الأصل باسم ثانٍ — سيرش كونسول عالقة بحالة فشل قديمة مربوطة
+# بـsitemap.xml تحديداً (أسبوعين "could not be read" رغم ملف سليم ١٠٠٪)
+Sitemap: https://mohframevision.github.io/hakolah/sitemap-v2.xml
 # فهرس يجمع الخريطتين أعلاه بملف واحد — يسهّل تسجيله بسيرش كونسول بإدخال واحد
 Sitemap: https://mohframevision.github.io/sitemap_index.xml
