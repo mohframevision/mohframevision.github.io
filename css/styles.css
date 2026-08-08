@@ -3,6 +3,25 @@
    ملف الأنماط الرئيسي
    ===================================== */
 
+/* ===== لوحة الألوان — دافئة بدل الأسود المسطّح، لمسة واحدة باردة (التركواز)
+   عمداً كلون مميز وحيد بدل تنافس رمادي عشوائي + سيان نيون بمكان ثاني ===== */
+:root {
+  --bg: #14110f;
+  --surface: #1a1613;
+  --surface-alt: #181411;
+  --border: #2a231e;
+  --border-strong: #362d26;
+  --border-hover: #453a31;
+  --text: #ffffff;
+  --text-secondary: #b5aca3;
+  --text-muted: #9a8f84;
+  --text-dim: #7d7268;
+  --accent: #4ecdc4;
+  --accent-dim: #2fa89f;
+  --font-body: 'Cairo', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
 /* ===== الإعدادات الأساسية ===== */
 * {
   margin: 0;
@@ -16,9 +35,9 @@ html {
 
 body {
   margin: 0;
-  background-color: #0b0b0b;
-  color: white;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
   direction: rtl;
   line-height: 1.6;
 }
@@ -51,16 +70,19 @@ body {
 }
 
 .nav a:hover {
-  color: #aaa;
+  color: var(--text-secondary);
   background: rgba(255,255,255,0.1);
 }
 
 .nav a.active {
-  border-bottom: 2px solid #aaa;
+  border-bottom: 2px solid var(--text-secondary);
   padding-bottom: 5px;
 }
 
 /* ===== قسم Hero ===== */
+/* توهّج دافئ خفيف بالمنتصف + خشونة (grain) خفيفة جداً — طبقتا خلفية بلا أي
+   ملف صورة أو مكتبة، SVG مضمّن كـdata URI. العتامة 0.045 داخل الـSVG نفسه
+   (attribute) عمداً بدل opacity على العنصر كامل، حتى ما يخفت المحتوى فوقه */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -72,18 +94,28 @@ body {
   animation: fadeIn 1.5s ease forwards;
   opacity: 0;
   transform: translateY(20px);
+  background-image: radial-gradient(
+      ellipse at 50% 35%,
+      rgba(78, 205, 196, 0.07),
+      transparent 60%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat;
+  background-size:
+    100% 100%,
+    140px 140px;
 }
 
 .hero h1 {
   font-size: clamp(32px, 8vw, 64px);
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: 4px;
   margin-bottom: 20px;
 }
 
 .subtitle {
   font-size: clamp(16px, 4vw, 22px);
-  color: #999;
+  color: var(--text-muted);
   max-width: 600px;
   line-height: 1.6;
   margin-bottom: 20px;
@@ -94,14 +126,14 @@ body {
   display: block;
   margin-top: 10px;
   font-size: clamp(14px, 3vw, 16px);
-  color: #777;
+  color: var(--text-dim);
   letter-spacing: 1px;
 }
 
 /* ===== الأزرار ===== */
 .btn {
   padding: 14px 40px;
-  border: 1px solid #999;
+  border: 1px solid var(--text-muted);
   text-decoration: none;
   color: white;
   transition: all 0.4s ease;
@@ -111,7 +143,7 @@ body {
   cursor: pointer;
   background: transparent;
   font-size: 16px;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   border-radius: 4px;
 }
 
@@ -137,41 +169,72 @@ body {
 .section h2 {
   margin-bottom: 40px;
   font-size: clamp(28px, 6vw, 42px);
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: 2px;
 }
 
 .section p {
   line-height: 1.8;
-  color: #aaa;
+  color: var(--text-secondary);
   font-size: clamp(16px, 3vw, 18px);
 }
 
 /* ===== فيديوهات الأعمال ===== */
+/* إطار خفيف حول الفيديو (كبرواز معرض) بدل إطار خام — بس بالاستخدام المستقل
+   (الرئيسية/نقش)؛ داخل بطاقة مشروع الإطار زائد لأن البطاقة نفسها لها حدودها،
+   فنلغيه هناك بقاعدة أدق تحتها */
 .video-block {
   max-width: 900px;
   margin: 60px auto;
-  transition: transform 0.4s ease;
+  padding: 14px;
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition:
+    transform 0.4s ease,
+    border-color 0.4s ease;
 }
 
 .video-block:hover {
-  transform: scale(1.02);
+  transform: scale(1.015);
+  border-color: var(--border-hover);
 }
 
 .video-block iframe {
+  display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  border-radius: 10px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   transition: transform 0.4s ease;
   border: none;
+}
+
+/* داخل بطاقة مشروع: بلا الإطار الإضافي، الفيديو يبقى ملاصقاً أعلى البطاقة
+   كالسابق تماماً — البطاقة نفسها هي الإطار الآن */
+.project-card .video-block {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.project-card .video-block:hover {
+  transform: none;
+}
+
+.project-card .video-block iframe {
+  border-radius: 12px 12px 0 0;
+  box-shadow: none;
 }
 
 .video-title {
   margin-top: 20px;
   font-size: clamp(16px, 4vw, 20px);
-  color: #aaa;
+  color: var(--text-secondary);
   padding: 0 20px;
 }
 
@@ -192,12 +255,12 @@ body {
 }
 
 .modal-content {
-  background: #111;
+  background: var(--surface);
   padding: 40px;
   width: 90%;
   max-width: 400px;
   text-align: center;
-  border: 1px solid #333;
+  border: 1px solid var(--border-strong);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   animation: fadeIn 0.4s ease;
@@ -210,15 +273,15 @@ body {
 
 .modal-content p {
   margin: 15px 0;
-  color: #aaa;
+  color: var(--text-secondary);
 }
 
 .close-btn {
   margin-top: 20px;
   cursor: pointer;
-  color: #aaa;
+  color: var(--text-secondary);
   padding: 10px 20px;
-  border: 1px solid #444;
+  border: 1px solid var(--border-hover);
   display: inline-block;
   border-radius: 4px;
   transition: all 0.3s ease;
@@ -233,9 +296,9 @@ body {
 footer {
   text-align: center;
   padding: 40px 20px;
-  color: #777;
+  color: var(--text-dim);
   font-size: 14px;
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
   margin-top: 60px;
 }
 
@@ -263,19 +326,39 @@ footer {
   padding: 0 20px;
 }
 
+/* نفس معالجة .resource-card بالضبط (تدرّج + شريط علوي يظهر + توهّج عند
+   المرور) — كانت البطاقة الوحيدة المميّزة بصرياً، الباقي مسطّح بالمقارنة */
 .project-card {
-  background: #111;
-  border: 1px solid #222;
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
+  border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
+  position: relative;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dim));
+  transform: scaleX(0);
+  transition: transform 0.35s ease;
+  z-index: 2;
+}
+
+.project-card:hover::before {
+  transform: scaleX(1);
 }
 
 .project-card:hover {
   transform: translateY(-10px);
-  border-color: #444;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-color: var(--accent);
+  box-shadow: 0 20px 50px rgba(78, 205, 196, 0.15);
 }
 
 .project-card img {
@@ -287,12 +370,12 @@ footer {
 .project-card h3 {
   padding: 20px;
   font-size: 20px;
-  color: #fff;
+  color: var(--text);
 }
 
 .project-card p {
   padding: 0 20px 20px;
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -306,16 +389,36 @@ footer {
 }
 
 .skill-card {
-  background: #111;
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
   padding: 30px;
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s ease;
+}
+
+.skill-card:hover::before {
+  transform: scaleY(1);
 }
 
 .skill-card:hover {
-  border-color: #444;
+  border-color: var(--accent);
   transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(78, 205, 196, 0.12);
 }
 
 .skill-icon {
@@ -329,7 +432,7 @@ footer {
 }
 
 .skill-card p {
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -338,8 +441,8 @@ footer {
   max-width: 600px;
   margin: 40px auto;
   padding: 40px;
-  background: #111;
-  border: 1px solid #222;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 
@@ -351,7 +454,7 @@ footer {
 .form-group label {
   display: block;
   margin-bottom: 10px;
-  color: #aaa;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -359,11 +462,11 @@ footer {
 .form-group textarea {
   width: 100%;
   padding: 12px;
-  background: #0b0b0b;
-  border: 1px solid #333;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   color: white;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   direction: rtl;
 }
@@ -371,7 +474,7 @@ footer {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #666;
+  border-color: var(--accent-dim);
 }
 
 .form-group textarea {
@@ -389,15 +492,15 @@ footer {
 }
 
 .service-card {
-  background: #111;
+  background: var(--surface);
   padding: 40px 30px;
-  border: 1px solid #222;
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .service-card:hover {
-  border-color: #444;
+  border-color: var(--border-hover);
   transform: translateY(-5px);
 }
 
@@ -412,7 +515,7 @@ footer {
 }
 
 .service-card p {
-  color: #888;
+  color: var(--text-muted);
   font-size: 16px;
   line-height: 1.8;
 }
@@ -424,7 +527,7 @@ footer {
 }
 
 .service-card li {
-  color: #aaa;
+  color: var(--text-secondary);
   padding: 8px 0;
   position: relative;
   padding-right: 20px;
@@ -434,7 +537,7 @@ footer {
   content: "✓";
   position: absolute;
   right: 0;
-  color: #666;
+  color: var(--text-dim);
 }
 
 /* ===== صفحة 404 ===== */
@@ -451,7 +554,7 @@ footer {
 .error-page h1 {
   font-size: clamp(80px, 20vw, 150px);
   margin-bottom: 20px;
-  color: #333;
+  color: var(--border-strong);
 }
 
 .error-page h2 {
@@ -460,7 +563,7 @@ footer {
 }
 
 .error-page p {
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 30px;
   font-size: clamp(16px, 4vw, 18px);
 }
@@ -477,7 +580,7 @@ footer {
 }
 
 .resource-disclaimer p {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 13.5px;
   line-height: 1.9;
   margin: 0;
@@ -495,7 +598,7 @@ footer {
 }
 
 .resource-disclaimer a {
-  color: #4ecdc4;
+  color: var(--accent);
 }
 
 .resource-disclaimer-toggle {
@@ -503,9 +606,9 @@ footer {
   margin-top: 12px;
   background: transparent;
   border: none;
-  color: #4ecdc4;
+  color: var(--accent);
   cursor: pointer;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   text-decoration: underline;
   padding: 0;
@@ -538,22 +641,22 @@ footer {
 .resource-search-input {
   width: 100%;
   padding: 14px 20px;
-  background: #111;
-  border: 1px solid #333;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   color: white;
   border-radius: 30px;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
   outline: none;
   transition: border-color 0.3s ease;
 }
 
 .resource-search-input:focus {
-  border-color: #4ecdc4;
+  border-color: var(--accent);
 }
 
 .resource-search-input::placeholder {
-  color: #666;
+  color: var(--text-dim);
 }
 
 /* قائمة نتائج البحث المنسدلة تحت الخانة */
@@ -562,8 +665,8 @@ footer {
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: #111;
-  border: 1px solid #333;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 14px;
   max-height: 320px;
   overflow-y: auto;
@@ -579,7 +682,7 @@ footer {
   padding: 12px 18px;
   color: white;
   text-decoration: none;
-  border-bottom: 1px solid #1c1c1c;
+  border-bottom: 1px solid var(--border);
   font-size: 14px;
   transition: background 0.2s ease;
 }
@@ -589,7 +692,7 @@ footer {
 }
 
 .resource-search-result-item:hover {
-  background: #1a1a1a;
+  background: var(--surface-alt);
 }
 
 .resource-search-result-icon {
@@ -600,7 +703,7 @@ footer {
 .resource-search-empty,
 .resource-search-more {
   padding: 16px 18px;
-  color: #888;
+  color: var(--text-muted);
   font-size: 13.5px;
   text-align: center;
 }
@@ -618,12 +721,12 @@ footer {
 .pill-link {
   padding: 10px 25px;
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid var(--border-hover);
   color: white;
   cursor: pointer;
   border-radius: 25px;
   transition: all 0.3s ease;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
 }
 
@@ -765,23 +868,30 @@ img[loading="lazy"].loaded {
 
 /* ===== صفحة الموارد المفيدة ===== */
 .resources-page {
-  --resource-accent: #4ecdc4; /* اللون المميز للصفحة - أخضر فاتح */
+  --resource-accent: var(--accent);
 }
 
+/* دخول واحد لطيف بدل قفز لا نهائي — القفز المستمر يبين رخيص على واجهة راقية */
 .resources-icon {
   display: inline-block;
-  animation: bounce 2s infinite;
+  animation: iconSettle 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+@keyframes iconSettle {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .resource-section {
   margin-bottom: 80px;
   padding-top: 50px;
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid var(--border);
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
@@ -800,11 +910,11 @@ img[loading="lazy"].loaded {
   text-align: center;
   padding: 0;
   border-radius: 50%;
-  background: rgba(20, 20, 20, 0.9);
-  border: 1px solid #333;
-  color: #fff;
+  background: rgba(26, 22, 19, 0.9);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
   font-size: 20px;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: var(--font-body);
   cursor: pointer;
   z-index: 900;
   backdrop-filter: blur(6px);
@@ -815,7 +925,7 @@ img[loading="lazy"].loaded {
 #scrollToTop:hover {
   background: #fff;
   color: #000;
-  border-color: #fff;
+  border-color: var(--text);
   transform: translateY(-3px);
 }
 
@@ -848,7 +958,7 @@ img[loading="lazy"].loaded {
 }
 
 .resource-section-desc {
-  color: #666;
+  color: var(--text-dim);
   margin-bottom: 40px;
   font-size: 16px;
   text-align: center;
@@ -876,9 +986,9 @@ img[loading="lazy"].loaded {
 
 /* ===== تصميم البطاقات ===== */
 .resource-card {
-  background: linear-gradient(145deg, #141414 0%, #0f0f0f 100%);
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
   padding: 35px 28px;
-  border: 1px solid #252525;
+  border: 1px solid var(--border-strong);
   border-radius: 16px;
   text-decoration: none;
   color: white;
@@ -900,7 +1010,7 @@ img[loading="lazy"].loaded {
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, var(--resource-accent), #2fa89f);
+  background: linear-gradient(90deg, var(--resource-accent), var(--accent-dim));
   transform: scaleX(0);
   transition: transform 0.35s ease;
 }
@@ -943,13 +1053,13 @@ img[loading="lazy"].loaded {
   font-size: 21px;
   margin-bottom: 12px;
   font-weight: 500;
-  color: #fff;
+  color: var(--text);
   position: relative;
   z-index: 1;
 }
 
 .resource-card p {
-  color: #999;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.7;
   flex-grow: 1;
@@ -976,9 +1086,9 @@ img[loading="lazy"].loaded {
 
 /* ===== بطاقات النصائح ===== */
 .tip-card {
-  background: linear-gradient(145deg, #141414 0%, #0d0d0d 100%);
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
   padding: 40px 30px;
-  border: 1px solid #252525;
+  border: 1px solid var(--border-strong);
   border-radius: 16px;
   text-align: right;
   transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -995,14 +1105,14 @@ img[loading="lazy"].loaded {
   right: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, var(--resource-accent), #2fa89f);
+  background: linear-gradient(180deg, var(--resource-accent), var(--accent-dim));
   transform: scaleY(0);
   transition: transform 0.35s ease;
   transform-origin: top;
 }
 
 .tip-card:hover {
-  border-color: #4ecdc4;
+  border-color: var(--accent);
   transform: translateY(-8px);
   box-shadow: 0 20px 50px rgba(78, 205, 196, 0.15);
 }
@@ -1020,10 +1130,10 @@ img[loading="lazy"].loaded {
   left: 20px;
   font-size: clamp(32px, 8vw, 56px); /* حجم متجاوب */
   font-weight: bold;
-  color: #00d4ff;
+  color: var(--accent);
   text-shadow: 
-    0 0 5px #00d4ff,
-    0 0 10px #00d4ff;
+    0 0 5px var(--accent),
+    0 0 10px var(--accent);
   line-height: 1;
   font-family: 'Arial', sans-serif;
   animation: pulse 7s ease-in-out infinite; /* حافظت على 7 ثواني */
@@ -1034,13 +1144,13 @@ img[loading="lazy"].loaded {
 @keyframes pulse {
   0%, 100% {
     text-shadow: 
-      0 0 5px #00d4ff,
-      0 0 10px #00d4ff;
+      0 0 5px var(--accent),
+      0 0 10px var(--accent);
   }
   50% {
     text-shadow: 
-      0 0 10px #00d4ff,
-      0 0 20px #00d4ff;
+      0 0 10px var(--accent),
+      0 0 20px var(--accent);
   }
 }
 
@@ -1059,12 +1169,12 @@ img[loading="lazy"].loaded {
 .tip-card h3 {
   font-size: 20px;
   margin-bottom: 15px;
-  color: #4ecdc4;
+  color: var(--accent);
   font-weight: 500;
 }
 
 .tip-card p {
-  color: #999;
+  color: var(--text-muted);
   font-size: 15px;
   line-height: 1.9;
 }
@@ -1202,4 +1312,49 @@ img[loading="lazy"].loaded {
     background: white;
     color: black;
   }
+}
+
+/* ===== ملاحظة المخرج (Director's Note) — اقتباس بصري بارز على صفحة "عنّي"
+   بدل ما تبقى كل الفقرات بنفس وزن النص وحجمه. علامة اقتباس سيريف كبيرة
+   (Playfair Display — بلا حروف عربية أصلاً، فتظهر فقط بالعلامة والنص
+   الإنجليزي الفرعي، والعربي يسقط تلقائياً على Cairo) ===== */
+.directors-note {
+  position: relative;
+  max-width: 640px;
+  margin: 60px auto;
+  padding: 40px 44px;
+  background: linear-gradient(145deg, var(--surface) 0%, var(--surface-alt) 100%);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: 4px 16px 16px 4px;
+  text-align: start;
+}
+
+.directors-note::before {
+  content: "\201C";
+  font-family: var(--font-serif);
+  font-size: 90px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.35;
+  position: absolute;
+  top: 6px;
+  inset-inline-start: 20px;
+}
+
+.directors-note blockquote {
+  margin: 0 0 14px;
+  font-size: clamp(19px, 3.5vw, 24px);
+  line-height: 1.8;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+}
+
+.directors-note cite {
+  display: block;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
 }

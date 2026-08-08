@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "Mohamed Frame Vision portfolio site - Eleventy build",
   "scripts": {
-    "build": "eleventy",
+    "build": "eleventy && node scripts/minify-css.js",
     "serve": "eleventy --serve"
   },
   "license": "ISC",
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.6"
+    "@11ty/eleventy": "^3.1.6",
+    "clean-css": "^5.3.3"
   }
 }

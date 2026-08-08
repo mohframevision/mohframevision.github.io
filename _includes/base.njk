@@ -70,10 +70,12 @@
   <link rel="preconnect" href="https://i.ytimg.com">
   {% endif %}
 
-  <!-- خط عربي احترافي -->
+  <!-- خط عربي احترافي (300 إضافي للعناوين الكبيرة) + خط سيريف إنجليزي للمسات
+       التحريرية (اقتباس "About" والنص الإنجليزي الفرعي) — Playfair Display
+       ما له حروف عربية أصلاً، فيسقط تلقائياً على Cairo بأي نص عربي يستخدمه -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/styles.min.css?v={{ buildTime }}">
@@ -102,17 +104,17 @@
     <p>&copy; 2026 Mohamed Frame Vision</p>
     {% else %}
     <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
-    <p style="margin-top: 10px; color: #555; font-size: 13px;">
-      <a href="contact.html" style="color: #777; border: none; padding: 0;">تواصل معنا</a> |
-      <a href="about.html" style="color: #777; border: none; padding: 0;">عن الموقع</a> |
-      <a href="privacy-policy.html" style="color: #777; border: none; padding: 0;">سياسة الخصوصية</a> |
-      <a href="terms.html" style="color: #777; border: none; padding: 0;">شروط الاستخدام</a>
+    <p style="margin-top: 10px; color: var(--text-dim); font-size: 13px;">
+      <a href="contact.html" style="color: var(--text-dim); border: none; padding: 0;">تواصل معنا</a> |
+      <a href="about.html" style="color: var(--text-dim); border: none; padding: 0;">عن الموقع</a> |
+      <a href="privacy-policy.html" style="color: var(--text-dim); border: none; padding: 0;">سياسة الخصوصية</a> |
+      <a href="terms.html" style="color: var(--text-dim); border: none; padding: 0;">شروط الاستخدام</a>
     </p>
-    <p style="margin-top: 15px; color: #666; font-size: 11px;">
+    <p style="margin-top: 15px; color: var(--text-dim); font-size: 11px;">
       📜 المحتوى مرخص تحت
       <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
          target="_blank"
-         style="color: #4ecdc4; text-decoration: none;">
+         style="color: var(--accent); text-decoration: none;">
         CC BY-NC-SA 4.0
       </a>
       - ممنوع الاستخدام التجاري
