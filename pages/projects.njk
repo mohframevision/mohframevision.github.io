@@ -20,7 +20,6 @@ youtubePreconnect: true
     <!-- أزرار الفلترة -->
     <div class="filter-buttons">
       <button class="filter-btn active" data-filter="all">الكل</button>
-      <button class="filter-btn" data-filter="commercial">محتوى تجاري</button>
       <button class="filter-btn" data-filter="shortfilm">أفلام قصيرة</button>
       <button class="filter-btn" data-filter="review">مراجعات</button>
       <button class="filter-btn" data-filter="creative">محتوى إبداعي</button>
@@ -43,31 +42,6 @@ youtubePreconnect: true
         <p>{{ p.description }}</p>
       </div>
       {% endfor %}
-
-      <!-- مشاريع إضافية (يمكن إضافة المزيد) -->
-      <div class="project-card" data-category="commercial">
-        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
-         !
-        </div>
-        <h3>قريباً</h3>
-        <p>قيد التطوير</p>
-      </div>
-
-      <div class="project-card" data-category="commercial">
-        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #111 0%, #222 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
-          📱
-        </div>
-        <h3>قريباً</h3>
-        <p>قيد التطوير</p>
-      </div>
-
-      <div class="project-card" data-category="creative">
-        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #222 0%, #111 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 48px;">
-          ✨
-        </div>
-        <h3>قريباً</h3>
-        <p>قيد التطوير</p>
-      </div>
     </div>
 
     <!-- زر التواصل -->

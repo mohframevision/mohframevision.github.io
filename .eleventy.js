@@ -16,7 +16,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("android-chrome-512x512.png");
   eleventyConfig.addPassthroughCopy("site.webmanifest");
   eleventyConfig.addPassthroughCopy("robots.txt");
-  eleventyConfig.addPassthroughCopy("sitemap.xml");
   eleventyConfig.addPassthroughCopy("ads.txt");
   eleventyConfig.addPassthroughCopy(".nojekyll");
   eleventyConfig.addPassthroughCopy("admin");
@@ -29,7 +28,7 @@ module.exports = function (eleventyConfig) {
       data: "../_data",
       output: "_site"
     },
-    templateFormats: ["njk", "md"],
+    templateFormats: ["njk", "md", "11ty.js"],
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk"
   };
