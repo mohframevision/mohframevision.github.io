@@ -170,98 +170,73 @@ function playSound(name, arg) {
   SOUNDS[name](ctx, getSfxBus(ctx), arg);
 }
 
-// ===== موسيقى خلفية لصفحة هكوله: حلقة حماسية مولّدة بالكود =====
-// 112 نبضة/دقيقة، ري الكبير D - Bm - G - A: باص نابض + أربيجيو، والطبل يدخل
-// بعد مقدمة من مازورتين والفلتر ينفتح تدريجياً (بناء حماس بدل بداية مفاجئة)
+// ===== موسيقى خلفية لصفحة هكوله: أجواء هادئة مولّدة بالكود =====
+// طلب المالك: هادئة ومحترمة، لا طابع لهو وطرب — فلا إيقاع ولا طبل ولا باص
+// نابض. طبقات صوتية طويلة بطابع وثائقي: كل 8 ثوانٍ وتر من ري الكبير
+// (D - Bm - G - A) يدخل ببطء ويذوب ببطء فوق اللي قبله
 const MUSIC_KEY = "mfv_music_pref";
-const MUSIC_BARS = [
-  { bass: 146.83, arp: [587.33, 739.99, 880] },
-  { bass: 123.47, arp: [493.88, 587.33, 739.99] },
-  { bass: 98.0, arp: [392.0, 493.88, 587.33] },
-  { bass: 110.0, arp: [440.0, 554.37, 659.25] },
+const MUSIC_CHORDS = [
+  [146.83, 220.0, 293.66, 369.99],
+  [123.47, 185.0, 246.94, 293.66],
+  [98.0, 146.83, 196.0, 246.94],
+  [110.0, 164.81, 220.0, 277.18],
 ];
-const MUSIC_VOLUME = 0.35;
+const CHORD_SEC = 8;
+const MUSIC_VOLUME = 0.5;
 let music = null;
 
 function createMusic(ctx) {
   const master = ctx.createGain();
   master.gain.value = 0.0001;
-  const opener = ctx.createBiquadFilter();
-  opener.type = "lowpass";
-  master.connect(opener).connect(ctx.destination);
-  const stepDur = 60 / 112 / 4;
-  let step = 0;
+  const soft = ctx.createBiquadFilter();
+  soft.type = "lowpass";
+  soft.frequency.value = 1400;
+  master.connect(soft).connect(ctx.destination);
+  let chord = 0;
   let next = 0;
   let timer = null;
 
-  function env(t, dur, gain) {
+  // نغمة طويلة: مذبذبين متباعدين قليلاً (دفء بدل صوت إلكتروني حاد)،
+  // دخول 3 ثوانٍ وخروج 4 — فتتداخل الأوتار بلا حد فاصل
+  function pad(freq, t, len, gain) {
     const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(gain, t + 0.005);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(gain, t + 3);
+    g.gain.setValueAtTime(gain, t + len - 4);
+    g.gain.linearRampToValueAtTime(0, t + len);
     g.connect(master);
-    return g;
-  }
-  function tone(type, freq, t, dur, gain, cutoff) {
-    const o = ctx.createOscillator();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, t);
-    const f = ctx.createBiquadFilter();
-    f.type = "lowpass";
-    f.frequency.value = cutoff;
-    o.connect(f).connect(env(t, dur, gain));
-    o.start(t);
-    o.stop(t + dur + 0.02);
-  }
-  function hit(t, dur, freq, gain) {
-    const src = ctx.createBufferSource();
-    src.buffer = getNoise(ctx);
-    const f = ctx.createBiquadFilter();
-    f.type = "bandpass";
-    f.frequency.value = freq;
-    f.Q.value = 0.7;
-    src.connect(f).connect(env(t, dur, gain));
-    src.start(t, Math.random() * 0.5);
-    src.stop(t + dur + 0.02);
-  }
-  function kick(t) {
-    const o = ctx.createOscillator();
-    o.frequency.setValueAtTime(150, t);
-    o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
-    o.connect(env(t, 0.3, 0.9));
-    o.start(t);
-    o.stop(t + 0.32);
+    [-3, 3].forEach((cents) => {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = freq;
+      o.detune.value = cents;
+      o.connect(g);
+      o.start(t);
+      o.stop(t + len + 0.05);
+    });
   }
   function schedule(i, t) {
-    const bar = Math.floor(i / 16);
-    const s = i % 16;
-    const chord = MUSIC_BARS[bar % 4];
-    const drums = bar >= 2;
-    if (drums && s % 4 === 0) kick(t);
-    if (drums && (s === 4 || s === 12)) hit(t, 0.14, 1500, 0.28);
-    if (s % 2 === 1) hit(t, 0.03, 8000, 0.09);
-    if (s % 2 === 0) tone("sawtooth", s % 4 === 2 ? chord.bass * 2 : chord.bass, t, stepDur * 1.6, 0.16, 700);
-    tone("triangle", chord.arp[[0, 1, 2, 1][s % 4]] * (s >= 8 ? 2 : 1), t, stepDur * 1.2, 0.05, 5000);
+    const notes = MUSIC_CHORDS[i % MUSIC_CHORDS.length];
+    notes.forEach((f, k) => pad(f, t, CHORD_SEC + 3, 0.05 - k * 0.008));
+    // لمعة خفيفة واحدة بالأعلى بمنتصف كل وتر
+    pad(notes[notes.length - 1] * 2, t + 2, 6, 0.012);
   }
   function pump() {
-    while (next < ctx.currentTime + 0.12) {
-      schedule(step++, next);
-      next += stepDur;
+    while (next < ctx.currentTime + 1) {
+      schedule(chord++, next);
+      next += CHORD_SEC;
     }
   }
   return {
     start() {
       if (timer) return;
       const now = ctx.currentTime;
-      step = 0;
+      chord = 0;
       next = now + 0.05;
       master.gain.cancelScheduledValues(now);
       master.gain.setValueAtTime(0.0001, now);
-      master.gain.exponentialRampToValueAtTime(MUSIC_VOLUME, now + 1.5);
-      opener.frequency.cancelScheduledValues(now);
-      opener.frequency.setValueAtTime(400, now);
-      opener.frequency.exponentialRampToValueAtTime(12000, now + 8);
-      timer = setInterval(pump, 25);
+      master.gain.exponentialRampToValueAtTime(MUSIC_VOLUME, now + 2);
+      timer = setInterval(pump, 250);
       pump();
     },
     stop() {
@@ -269,7 +244,7 @@ function createMusic(ctx) {
       clearInterval(timer);
       timer = null;
       master.gain.cancelScheduledValues(ctx.currentTime);
-      master.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.12);
+      master.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.3);
     },
   };
 }
@@ -633,7 +608,7 @@ function initStoryPage() {
     setBtn();
     music?.stop();
   };
-  // setInterval يتباطأ بالتبويب المخفي فتتقطع الإيقاعات — نوقف ونكمّل
+  // setInterval يتباطأ بالتبويب المخفي فتتأخر الأوتار — نوقف ونكمّل
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) music?.stop();
     else if (on) play();

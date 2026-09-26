@@ -2083,7 +2083,7 @@ img[loading="lazy"].loaded {
   }
 }
 
-/* زر الموسيقى جنب زر الصوت، وينبض بأخضر هكوله وهو شغّال */
+/* زر الموسيقى جنب زر الصوت، ويتنفّس ببطء بأخضر هكوله وهو شغّال */
 .music-toggle {
   left: 60px;
 }
@@ -2098,12 +2098,12 @@ img[loading="lazy"].loaded {
 
 .music-toggle[aria-pressed="true"] {
   color: var(--hakolah);
-  animation: musicPulse 0.536s ease-in-out infinite alternate;
+  animation: musicPulse 2.5s ease-in-out infinite alternate;
 }
 
 @keyframes musicPulse {
   to {
-    transform: scale(1.12);
+    opacity: 0.55;
   }
 }
 
