@@ -2088,6 +2088,14 @@ img[loading="lazy"].loaded {
   left: 60px;
 }
 
+/* تحت 1250 زر القائمة ياخذ مكانه، وحتى 1300 البلاطات توصل له — ننزله تحت الشريط */
+@media (max-width: 1300px) {
+  .music-toggle {
+    top: 74px;
+    left: 12px;
+  }
+}
+
 .music-toggle[aria-pressed="true"] {
   color: var(--hakolah);
   animation: musicPulse 0.536s ease-in-out infinite alternate;
