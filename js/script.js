@@ -232,10 +232,10 @@ function initWorkStack() {
       if (d < 0) opacity = Math.max(0, 1 + d * 1.6);
       else if (d > 9) opacity = Math.max(0, 1 - (d - 9) / 4);
       card.style.opacity = opacity.toFixed(3);
-      card.style.visibility = opacity < 0.01 ? 'hidden' : '';
       // البطاقة اللي تطلع (تتلاشى قدّام) تبقى شبه شفافة لكنها أقرب للمشاهد،
-      // فتلقط الضغطة بدل البطاقة الحالية اللي تحتها — نوقف تفاعلها من بدري
-      card.style.pointerEvents = d < -0.3 ? 'none' : '';
+      // فتلقط الضغطة بدل البطاقة الحالية اللي تحتها — نوقف تفاعلها من بدري.
+      // بلا visibility:hidden: المخفية تبقى قابلة للوصول بـShift+Tab
+      card.style.pointerEvents = d < -0.3 || opacity < 0.05 ? 'none' : '';
       const lift = i === hovered ? 45 : 0;
       card.style.transform = `translate3d(${L.bx + d * L.x}px, ${L.by + d * L.y}px, ${d * L.z + lift}px) rotateY(${L.rot}deg)`;
     });
@@ -264,15 +264,22 @@ function initWorkStack() {
   // بعد ما يوقف التمرير/السحب نثبّت على أقرب بطاقة كاملة — وإلا تستقر الرصّة
   // بين بطاقتين (مثلاً 8.4): البطاقة الحالية نص شفافة، واللي قبلها باقية
   // قدّامها وتلقط الضغطة، والرقم المعروض ما يطابق البطاقة الواضحة
+  // نقرة عجلة واحدة (~0.35 بطاقة) كانت ترجع لنفس البطاقة بالتقريب —
+  // أي حركة واضحة من البطاقة الثابتة تنقل بطاقة وحدة على الأقل
   let snapTimer = null;
+  let rest = 0;
   function snap() {
     clearTimeout(snapTimer);
     snapTimer = null;
-    go(Math.round(target), true);
+    let t = Math.round(target);
+    if (t === rest && Math.abs(target - rest) > 0.15) t += Math.sign(target - rest);
+    go(t, true);
+
   }
 
   function go(t, fromSnap) {
     target = Math.max(0, Math.min(N - 1, t));
+    if (Number.isInteger(target)) rest = target;
     hint.classList.add('gone');
     if (!fromSnap && !drag?.moved) {
       clearTimeout(snapTimer);
@@ -317,8 +324,10 @@ function initWorkStack() {
       label.classList.toggle('show', i !== -1);
       if (card) {
         label.textContent = card.dataset.title;
-        label.style.left = `${e.clientX}px`;
-        label.style.top = `${e.clientY}px`;
+        // left/top تنضرب بتكبير fit.js، والمؤشر بكسل الشاشة — نقسم عليه
+        const zoom = parseFloat(document.documentElement.style.zoom) || 1;
+        label.style.left = `${e.clientX / zoom}px`;
+        label.style.top = `${e.clientY / zoom}px`;
       }
     }
   });
@@ -358,6 +367,12 @@ function initWorkStack() {
   const lightbox = document.getElementById('lightbox');
   const lbFrame = document.getElementById('lightboxFrame');
   let lastFocus = null;
+  // الخلفية كلها inert والمشغّل مفتوح — Tab يبقى داخل المشغّل
+  function setInert(on) {
+    for (let n = lightbox; n !== document.body; n = n.parentElement) {
+      for (const sib of n.parentElement.children) if (sib !== n) sib.inert = on;
+    }
+  }
   function openLightbox(i) {
     const card = cards[i];
     lastFocus = document.activeElement;
@@ -366,12 +381,14 @@ function initWorkStack() {
     document.getElementById('lightboxTitle').textContent = card.dataset.title;
     document.getElementById('lightboxDesc').textContent = card.dataset.desc;
     lightbox.hidden = false;
+    setInert(true);
     document.getElementById('lightboxClose').focus();
     playSound('open');
   }
   function closeLightbox() {
     if (lightbox.hidden) return;
     lightbox.hidden = true;
+    setInert(false);
     lbFrame.src = 'about:blank';
     playSound('close');
     lastFocus?.focus({ preventScroll: true });

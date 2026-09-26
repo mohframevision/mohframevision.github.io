@@ -246,7 +246,7 @@ body.page-home {
   perspective: 1500px;
   perspective-origin: 45% 40%;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pinch-zoom;
   cursor: grab;
 }
 
@@ -320,6 +320,24 @@ body.page-home {
   transform: translate(-50%, -140%) scale(1);
 }
 
+/* سطر التعريف الظاهر: الزائر يعرف من أول نظرة إن هذي أعمال محرر فيديو */
+.home-tagline {
+  position: fixed;
+  top: 92px;
+  inset-inline: 0;
+  z-index: 4;
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.page-home.view-index .home-tagline {
+  display: none;
+}
+
 .stack-caption,
 .stack-hint {
   position: fixed;
@@ -330,7 +348,7 @@ body.page-home {
 }
 
 .stack-caption {
-  bottom: 96px;
+  bottom: 124px;
   color: var(--text);
   font-size: 15px;
   font-weight: 500;
@@ -345,7 +363,7 @@ body.page-home {
 }
 
 .stack-hint {
-  bottom: 124px;
+  bottom: 154px;
   color: var(--text-dim);
   font-size: 12px;
   transition: opacity 0.6s ease;
@@ -513,17 +531,19 @@ body.page-home {
   /* الجوال: التذييل (الاسم + الروابط) ياخذ ~100px تحت — العنوان فوقه بمسافة،
      ومفتاح العرض/القائمة يطلع فوق تحت القائمة بدل ما يغطي روابط التذييل */
   .stack-caption {
-    bottom: 118px;
     padding: 0 20px;
-  }
-
-  .stack-hint {
-    bottom: 148px;
   }
 
   .view-switch {
     bottom: auto;
     top: 74px;
+  }
+
+  .home-tagline {
+    top: auto;
+    bottom: 184px;
+    padding: 0 20px;
+    font-size: 13px;
   }
 
   .stack-index {
@@ -609,11 +629,6 @@ body.page-home {
   padding-top: 120px;
 }
 
-.section-tight {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
 .page-title {
   font-size: clamp(36px, 8vw, 48px);
   margin-bottom: 20px;
@@ -637,10 +652,6 @@ body.page-home {
   border-radius: 16px;
   padding: 50px 30px;
   text-align: center;
-}
-
-.section-tight .panel {
-  margin-top: 0;
 }
 
 .panel-icon {
@@ -773,13 +784,6 @@ body.page-home {
   box-shadow: none;
 }
 
-.video-title {
-  margin-top: 20px;
-  font-size: clamp(16px, 4vw, 20px);
-  color: var(--text-secondary);
-  padding: 0 20px;
-}
-
 /* ===== التذييل: اسم بالمنتصف وروابط صغيرة (Avara) ===== */
 .site-footer {
   text-align: center;
@@ -851,6 +855,7 @@ body.page-home {
   bottom: 0;
   inset-inline: 0;
   margin: 0;
+  padding-top: 0;
   padding-bottom: 18px;
 }
 
@@ -1168,17 +1173,6 @@ body.page-home {
   padding: 8px 0;
   position: relative;
   padding-right: 20px;
-}
-
-.section .service-card p.service-note {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-}
-
-.service-note a {
-  color: var(--accent);
 }
 
 /* قائمة "لماذا تختارني" — علامة صح بلون الموقع بدل إيموجي ✅ */
@@ -1890,25 +1884,6 @@ img[loading="lazy"].loaded {
   .tip-card {
     padding-left: 100px;
   }
-}
-
-/* ===== بطاقات الكورسات ===== */
-.course-card {
-  position: relative;
-}
-
-.course-level {
-  display: inline-block;
-  background: rgba(78, 205, 196, 0.12);
-  color: var(--resource-accent);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  margin-top: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  position: relative;
-  z-index: 1;
 }
 
 /* ===== بطاقات الأدوات ===== */
