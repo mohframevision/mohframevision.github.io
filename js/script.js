@@ -156,6 +156,10 @@ const SOUNDS = {
     voice(ctx, bus, { freq, attack: 0.008, decay: 0.4, gain: 0.03, pan: ((i % 5) - 2) * 0.12 });
     voice(ctx, bus, { freq: freq * 2, attack: 0.004, decay: 0.15, gain: 0.008 });
   },
+  // نقرة منزلق الصوت: تعلى نغمتها مع المستوى (إحساس ملموس بالدرجات)
+  level(ctx, bus, v = 0) {
+    voice(ctx, bus, { freq: 420 + v * 640, decay: 0.035, gain: 0.035 });
+  },
 };
 
 function getAudio() {
@@ -195,7 +199,9 @@ const MUSIC_NEXT = {
 // خماسي ري الكبير — ما فيه نغمة تتنافر مع أي وتر فوق
 const MUSIC_BELLS = [440.0, 493.88, 587.33, 659.25, 739.99, 880.0, 987.77];
 const MUSIC_VOLUME = 1.2;
+const MUSIC_LEVEL_KEY = "mfv_music_level";
 let music = null;
+let musicLevel = 0.7;
 
 function createMusic(ctx) {
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -216,7 +222,10 @@ function createMusic(ctx) {
   verb.buffer = makeRoomImpulse(ctx, 3.5);
   const wet = ctx.createGain();
   wet.gain.value = 0.45;
-  master.connect(soft);
+  // مستوى المستخدم من المنزلق — تربيعي لأن الأذن تسمع الصوت لوغاريتمياً
+  const level = ctx.createGain();
+  level.gain.value = musicLevel * musicLevel;
+  master.connect(level).connect(soft);
   soft.connect(ctx.destination);
   soft.connect(verb).connect(wet).connect(ctx.destination);
 
@@ -292,6 +301,9 @@ function createMusic(ctx) {
     while (nextBell < horizon) nextBell += scheduleBell(nextBell);
   }
   return {
+    setLevel(l) {
+      level.gain.setTargetAtTime(l * l, ctx.currentTime, 0.04);
+    },
     start() {
       if (timer) return;
       const now = ctx.currentTime;
@@ -330,6 +342,7 @@ const ICONS = {
   "menu": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>',
   "close": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>',
   "volume-up": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/></svg>',
+  "volume-down": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M200-360v-240h160l200-200v640L360-360H200Zm440 40v-322q45 21 72.5 65t27.5 97q0 53-27.5 96T640-320ZM480-606l-86 86H280v80h114l86 86v-252ZM380-480Z"/></svg>',
   "volume-off": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/></svg>',
 };
 
@@ -673,6 +686,125 @@ function initStoryPage() {
     setBtn();
     music?.stop();
   };
+  // ===== منزلق مستوى الموسيقى (مثل الجوال): سحب نسبي باللمس/الماوس، ضغطة
+  // تقفز للنقطة، عجلة، وأسهم. نقرة بنغمة تعلى + اهتزاز خفيف عند كل 10٪،
+  // ومطّ مطاطي لو سحبت بعد الحد ثم يرجع بنابض =====
+  const dock = document.getElementById('musicDock');
+  const wrap = dock.querySelector('.vol-wrap');
+  const vol = document.getElementById('musicVol');
+  const tip = dock.querySelector('.vol-tip');
+  const volIcon = vol.querySelector('.vol-icon');
+  const fold = dock.querySelector('.dock-fold');
+  try {
+    const saved = parseFloat(localStorage.getItem(MUSIC_LEVEL_KEY));
+    if (saved >= 0 && saved <= 1) musicLevel = saved;
+  } catch {
+    /* تخزين ممنوع — نبدأ بالافتراضي */
+  }
+  let lastStep = Math.round(musicLevel * 10);
+  function setLevel(v, feedback) {
+    musicLevel = Math.max(0, Math.min(1, v));
+    const pct = Math.round(musicLevel * 100);
+    wrap.style.setProperty('--v', musicLevel);
+    vol.classList.toggle('low', musicLevel < 0.22);
+    vol.setAttribute('aria-valuenow', pct);
+    tip.textContent = pct;
+    volIcon.innerHTML = ICONS[musicLevel === 0 ? 'volume-off' : musicLevel < 0.5 ? 'volume-down' : 'volume-up'];
+    music?.setLevel(musicLevel);
+    const stepNow = Math.round(musicLevel * 10);
+    if (feedback && stepNow !== lastStep) {
+      playSound('level', musicLevel);
+      navigator.vibrate?.(6);
+    }
+    lastStep = stepNow;
+  }
+  function commit() {
+    try {
+      localStorage.setItem(MUSIC_LEVEL_KEY, String(musicLevel));
+    } catch {
+      /* وضع خاص */
+    }
+    // رفع الصوت والموسيقى طافية = يبغاها تشتغل
+    if (musicLevel > 0 && !on) btn.click();
+  }
+  setLevel(musicLevel, false);
+
+  let slide = null;
+  vol.addEventListener('pointerdown', (e) => {
+    vol.setPointerCapture(e.pointerId);
+    slide = { y: e.clientY, start: musicLevel, h: vol.getBoundingClientRect().height, moved: false };
+    vol.classList.add('dragging');
+    wrap.classList.add('show-tip');
+  });
+  vol.addEventListener('pointermove', (e) => {
+    if (!slide) return;
+    const dy = slide.y - e.clientY;
+    if (!slide.moved && Math.abs(dy) < 4) return;
+    slide.moved = true;
+    const raw = slide.start + dy / slide.h;
+    setLevel(raw, true);
+    // مطّ مطاطي بعد الحد: يتناقص كلما سحبت أكثر (نفس إحساس الجوال)
+    const over = raw > 1 ? raw - 1 : raw < 0 ? -raw : 0;
+    const stretch = 0.1 * (1 - Math.exp(-over * 4));
+    vol.style.transformOrigin = raw > 1 ? '50% 100%' : '50% 0%';
+    vol.style.transform = over ? `scale(${1 - stretch * 0.4}, ${1 + stretch})` : '';
+  });
+  const endSlide = (e) => {
+    if (!slide) return;
+    if (!slide.moved && e.type === 'pointerup') {
+      const r = vol.getBoundingClientRect();
+      setLevel(1 - (e.clientY - r.top) / r.height, true);
+    }
+    slide = null;
+    vol.classList.remove('dragging');
+    vol.style.transform = '';
+    setTimeout(() => wrap.classList.remove('show-tip'), 500);
+    commit();
+  };
+  vol.addEventListener('pointerup', endSlide);
+  vol.addEventListener('pointercancel', endSlide);
+  vol.addEventListener('keydown', (e) => {
+    const k = { ArrowUp: 0.05, ArrowRight: 0.05, ArrowDown: -0.05, ArrowLeft: -0.05, PageUp: 0.1, PageDown: -0.1 }[e.key];
+    if (k === undefined && e.key !== 'Home' && e.key !== 'End') return;
+    e.preventDefault();
+    setLevel(e.key === 'Home' ? 0 : e.key === 'End' ? 1 : musicLevel + k, true);
+    commit();
+  });
+  vol.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    setLevel(musicLevel - e.deltaY * 0.001, true);
+    commit();
+  }, { passive: false });
+
+  // الطي: بالجوال مطوية افتراضياً عشان ما تغطي النص
+  const FOLD_KEY = 'mfv_music_dock';
+  let folded;
+  try {
+    const f = localStorage.getItem(FOLD_KEY);
+    folded = f ? f === 'folded' : window.innerWidth <= 700;
+  } catch {
+    folded = window.innerWidth <= 700;
+  }
+  function setFold(f) {
+    folded = f;
+    dock.classList.toggle('folded', f);
+    wrap.inert = f;
+    fold.setAttribute('aria-expanded', String(!f));
+    const label = f ? 'إظهار التحكم بالصوت' : 'طي التحكم بالصوت';
+    fold.setAttribute('aria-label', label);
+    fold.title = label;
+  }
+  setFold(folded);
+  fold.addEventListener('click', () => {
+    setFold(!folded);
+    try {
+      localStorage.setItem(FOLD_KEY, folded ? 'folded' : 'open');
+    } catch {
+      /* وضع خاص */
+    }
+    playSound(folded ? 'close' : 'open');
+  });
+
   // setInterval يتباطأ بالتبويب المخفي فتتأخر الأوتار — نوقف ونكمّل
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) music?.stop();

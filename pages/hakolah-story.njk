@@ -17,7 +17,17 @@ twitterCard: "summary_large_image"
 ---
 {% from "icon.njk" import icon %}
   {# خارج .section: حركة الظهور فيها transform فتصير حاوية للعناصر الثابتة #}
-  <button type="button" class="corner-btn music-toggle" aria-pressed="false" aria-label="تشغيل الموسيقى" title="تشغيل الموسيقى">{{ icon("music-note", 20) }}</button>
+  <div class="music-dock" id="musicDock">
+    <button type="button" class="music-toggle" aria-pressed="false" aria-label="تشغيل الموسيقى" title="تشغيل الموسيقى">{{ icon("music-note", 20) }}</button>
+    <div class="vol-wrap">
+      <div class="vol" id="musicVol" role="slider" tabindex="0" aria-label="مستوى صوت الموسيقى" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70">
+        <div class="vol-fill"></div>
+        <span class="vol-icon"></span>
+      </div>
+      <span class="vol-tip" aria-hidden="true"></span>
+    </div>
+    <button type="button" class="dock-fold" aria-expanded="true" aria-controls="musicVol" aria-label="طي التحكم بالصوت" title="طي التحكم بالصوت"><svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg></button>
+  </div>
 
   <section class="section page-top story">
 

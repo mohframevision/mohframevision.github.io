@@ -2083,17 +2083,153 @@ img[loading="lazy"].loaded {
   }
 }
 
-/* زر الموسيقى جنب زر الصوت، ويتنفّس ببطء بأخضر هكوله وهو شغّال */
-.music-toggle {
-  left: 60px;
+/* ===== عدّة الموسيقى تحت زر الصوت: زر تشغيل + منزلق صوت عمودي مثل الجوال
+   + طي. عمودياً بالزاوية عشان ما تزاحم بلاطات القائمة بأي عرض ===== */
+.music-dock {
+  position: fixed;
+  top: 70px;
+  left: 12px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 28px;
+  /* أعتم من باقي الزجاج: بالجوال تطفو فوق النص فكان يبان من خلفها */
+  background: rgba(14, 14, 14, 0.86);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
 }
 
-/* تحت 1250 زر القائمة ياخذ مكانه، وحتى 1300 البلاطات توصل له — ننزله تحت الشريط */
-@media (max-width: 1300px) {
-  .music-toggle {
-    top: 74px;
-    left: 12px;
-  }
+.music-dock button {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    background 0.25s ease;
+}
+
+.music-dock button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.music-dock .dock-fold {
+  height: 30px;
+}
+
+.dock-fold svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.music-dock.folded .dock-fold svg {
+  transform: rotate(180deg);
+}
+
+.vol-wrap {
+  --v: 0.7;
+  position: relative;
+  height: 150px;
+  transition:
+    height 0.45s cubic-bezier(0.34, 1.25, 0.64, 1),
+    opacity 0.25s ease;
+}
+
+.music-dock.folded .vol-wrap {
+  height: 0;
+  opacity: 0;
+}
+
+.vol {
+  position: relative;
+  width: 44px;
+  height: 150px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: ns-resize;
+  touch-action: none;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vol.dragging {
+  transition: none;
+}
+
+.vol:focus-visible {
+  outline: 2px solid var(--hakolah);
+  outline-offset: 3px;
+}
+
+.vol-fill {
+  position: absolute;
+  inset: auto 0 0;
+  height: calc(var(--v) * 100%);
+  background: linear-gradient(to top, var(--hakolah), oklch(0.86 0.09 162));
+  transition: height 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+.vol.dragging .vol-fill {
+  transition: none;
+}
+
+/* الأيقونة داكنة فوق التعبئة الخضراء، وبيضاء لما المستوى واطي وتحتها فراغ */
+.vol-icon {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  color: #06140f;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.vol.low .vol-icon {
+  color: var(--text);
+}
+
+.vol-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* الرقم يطلع جنب المنزلق وقت السحب ويمشي مع حافة التعبئة */
+.vol-tip {
+  position: absolute;
+  left: 56px;
+  top: clamp(14px, calc((1 - var(--v)) * 150px), 136px);
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #151515;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-latin);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-6px, -50%) scale(0.9);
+  transition:
+    opacity 0.15s ease,
+    transform 0.2s ease;
+}
+
+.vol-wrap.show-tip .vol-tip {
+  opacity: 1;
+  transform: translate(0, -50%) scale(1);
 }
 
 .music-toggle[aria-pressed="true"] {
