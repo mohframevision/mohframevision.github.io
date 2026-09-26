@@ -9,10 +9,11 @@ keywords: "تواصل, مراسلة, contact, email"
 ogTitle: "تواصل مع Mohamed Frame Vision"
 ogDescription: "تواصل معي لمناقشة مشروعك"
 ---
+{% from "icon.njk" import icon %}
   <!-- قسم التواصل -->
   <section class="section" style="padding-top: 120px; min-height: 100vh;">
-    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 20px;">تواصل معي</h1>
-    <p style="max-width: 600px; margin: 0 auto 50px; color: var(--text-secondary);">
+    <h1 class="page-title">تواصل معي</h1>
+    <p class="page-intro">
       لديك مشروع؟ أريد أن أسمع عنه! املأ النموذج أدناه أو تواصل معي مباشرة
     </p>
 
@@ -63,56 +64,38 @@ ogDescription: "تواصل معي لمناقشة مشروعك"
 
       <!-- معلومات التواصل المباشر -->
       <div style="text-align: center;">
-        <div style="background: var(--surface); padding: 40px; border: 1px solid #222; border-radius: 12px;">
+        <div class="contact-panel">
           <h3 style="font-size: 24px; margin-bottom: 30px;">طرق التواصل المباشر</h3>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">📧</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">البريد الإلكتروني</p>
-            <a href="mailto:mohframevision@outlook.com" style="color: white; text-decoration: none; border: none; padding: 0;">
-              mohframevision@outlook.com
-            </a>
-          </div>
+          <a class="contact-method" href="mailto:mohframevision@outlook.com">
+            <span class="contact-method-icon">{{ icon("mail", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">البريد الإلكتروني</span><span class="contact-method-value">mohframevision@outlook.com</span></span>
+          </a>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">💬</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">واتساب</p>
-            <a href="https://wa.me/97339006824" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
-              تواصل عبر واتساب
-            </a>
-          </div>
+          <a class="contact-method" href="https://wa.me/97339006824" target="_blank" rel="noopener">
+            <span class="contact-method-icon">{{ icon("chat", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">واتساب</span><span class="contact-method-value">تواصل عبر واتساب</span></span>
+          </a>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">🎬</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">يوتيوب</p>
-            <a href="https://youtube.com/@mohframevision" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
-              @mohframevision
-            </a>
-          </div>
+          <a class="contact-method" href="https://youtube.com/@mohframevision" target="_blank" rel="noopener">
+            <span class="contact-method-icon">{{ icon("smart-display", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">يوتيوب</span><span class="contact-method-value">@mohframevision</span></span>
+          </a>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">📷</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">إنستقرام</p>
-            <a href="https://www.instagram.com/mohframevision" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
-              @mohframevision
-            </a>
-          </div>
+          <a class="contact-method" href="https://www.instagram.com/mohframevision" target="_blank" rel="noopener">
+            <span class="contact-method-icon">{{ icon("photo-camera", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">إنستقرام</span><span class="contact-method-value">@mohframevision</span></span>
+          </a>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">🎵</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">تيك توك</p>
-            <a href="https://www.tiktok.com/@mohframevision" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
-              @mohframevision
-            </a>
-          </div>
+          <a class="contact-method" href="https://www.tiktok.com/@mohframevision" target="_blank" rel="noopener">
+            <span class="contact-method-icon">{{ icon("music-note", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">تيك توك</span><span class="contact-method-value">@mohframevision</span></span>
+          </a>
 
-          <div style="margin: 25px 0; padding: 20px; background: var(--bg); border-radius: 8px;">
-            <p style="font-size: 40px; margin-bottom: 10px;">🔗</p>
-            <p style="color: var(--text-secondary); margin-bottom: 5px;">كل الروابط</p>
-            <a href="https://linktr.ee/f5r.tr" target="_blank" style="color: white; text-decoration: none; border: none; padding: 0;">
-              linktr.ee/f5r.tr
-            </a>
-          </div>
+          <a class="contact-method" href="https://linktr.ee/f5r.tr" target="_blank" rel="noopener">
+            <span class="contact-method-icon">{{ icon("language", 26) }}</span>
+            <span class="contact-method-text"><span class="contact-method-label">كل الروابط</span><span class="contact-method-value">linktr.ee/f5r.tr</span></span>
+          </a>
 
           <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #222;">
             <p style="color: var(--text-muted); font-size: 14px; line-height: 1.8;">
@@ -123,7 +106,7 @@ ogDescription: "تواصل معي لمناقشة مشروعك"
         </div>
 
         <!-- أزرار إضافية -->
-        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <div class="actions">
           <a href="projects.html" class="btn">شاهد أعمالي</a>
           <a href="services.html" class="btn">الخدمات</a>
         </div>

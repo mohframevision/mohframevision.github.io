@@ -18,8 +18,9 @@ twitterTitle: "نقش ستوديو - Naqsh Studio"
 twitterDescription: "فريق إنتاج مرئي متكامل في البحرين"
 twitterImage: "https://mohframevision.github.io/images/naqsh/naqsh-hero.jpg"
 ---
+{% from "icon.njk" import icon %}
   <!-- قسم نقش ستوديو -->
-  <section class="section" style="padding-top: 120px;">
+  <section class="section page-top">
 
     <!-- شعار نقش -->
     <div class="video-block" style="max-width: 700px;">
@@ -39,50 +40,50 @@ twitterImage: "https://mohframevision.github.io/images/naqsh/naqsh-hero.jpg"
     </div>
 
     <!-- الشريكان المؤسسان -->
-    <h2 style="margin-top: 80px;">الشريكان المؤسسان</h2>
+    <h2 class="section-gap">الشريكان المؤسسان</h2>
     <div class="services-grid" style="max-width: 800px; margin: 40px auto 0;">
       <div class="service-card">
-        <div class="service-icon">🎬</div>
+        <div class="service-icon">{{ icon("videocam", 44) }}</div>
         <h3>محمد الخزاعي</h3>
         <p>شريك مؤسس، المدير التقني (COO)<br>تصوير، مونتاج، صوت، وما بعد الإنتاج</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">🎨</div>
+        <div class="service-icon">{{ icon("brush", 44) }}</div>
         <h3>علي حسين البلادي</h3>
         <p>شريك مؤسس، المدير الإبداعي (CEO)</p>
       </div>
     </div>
 
     <!-- الخدمات -->
-    <h2 style="margin-top: 80px;">خدماتنا</h2>
+    <h2 class="section-gap">خدماتنا</h2>
     <div class="services-grid" style="max-width: 1000px; margin: 40px auto 0;">
       <div class="service-card">
-        <div class="service-icon">🎥</div>
+        <div class="service-icon">{{ icon("movie", 44) }}</div>
         <h3>Production</h3>
         <p>إدارة المشروع من الفكرة والتخطيط، إلى التنفيذ الكامل على أرض الواقع</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">📹</div>
+        <div class="service-icon">{{ icon("videocam", 44) }}</div>
         <h3>Cinematography</h3>
         <p>تصوير سينمائي احترافي بمعدات متخصصة</p>
       </div>
       <div class="service-card">
-        <div class="service-icon">✂️</div>
+        <div class="service-icon">{{ icon("content-cut", 44) }}</div>
         <h3>Edit</h3>
         <p>مونتاج وما بعد إنتاج بلمسة بصرية فاخرة تعكس هوية العلامة</p>
       </div>
       <div class="service-card" style="grid-column: 1 / -1; max-width: 320px; margin: 0 auto;">
-        <div class="service-icon">🎨</div>
+        <div class="service-icon">{{ icon("animation", 44) }}</div>
         <h3>Animation</h3>
         <p>رسوم متحركة ثنائية الأبعاد (2D)، وقريباً ثلاثية الأبعاد (3D)</p>
       </div>
     </div>
 
     <!-- التواصل -->
-    <div style="margin-top: 80px; max-width: 700px; margin-left: auto; margin-right: auto; background: var(--surface); padding: 50px 30px; border-radius: 12px; border: 1px solid #222;">
+    <div class="panel">
       <h2 style="margin-bottom: 20px;">عندك مشروع يحتاج فريق كامل؟</h2>
       <p style="color: var(--text-secondary); margin-bottom: 30px;">تواصل مع نقش ستوديو لمناقشة تفاصيل مشروعك</p>
-      <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+      <div class="actions">
         <a href="https://instagram.com/nagsh.media" target="_blank" class="btn">تواصل عبر إنستغرام</a>
         <a href="contact.html" class="btn">تواصل معي مباشرة</a>
       </div>

@@ -1,10 +1,13 @@
+{% from "icon.njk" import icon %}
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <!-- الإعدادات الأساسية -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- يكبّر الصفحة بالتناسب على الشاشات العريضة — لازم قبل أول رسم -->
+  <script src="js/fit.js?v={{ buildTime }}"></script>
 
   <!-- Google Search Console Verification -->
   <meta name="google-site-verification" content="ovYyi0AFK7ZaPy_Do3z0VH4rU5Po34l8A5qjzZQlp6A" />
@@ -78,7 +81,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/styles.min.css?v={{ buildTime }}">
+  {# بالتطوير (eleventy --serve) الملف الأصلي مباشرة: styles.min.css ما
+     يتولّد إلا بـnpm run build (scripts/minify-css.js)، فكان التطوير يعرض
+     نسخة قديمة محفوظة بالمستودع وأي تعديل CSS ما يبين #}
+  <link rel="stylesheet" href="css/{{ 'styles.css' if eleventy.env.runMode == 'serve' else 'styles.min.css' }}?v={{ buildTime }}">
 
   {% if schemaJSON %}
   <!-- بيانات منظمة لمحركات البحث (Schema.org) -->
@@ -89,43 +95,52 @@
 </head>
 
 <body>
-  <!-- شريط التنقل -->
-  <nav class="nav">
-    {% for item in site.nav %}
-    <a href="{{ item.href }}"{% if item.href == navActive %} class="active"{% endif %}>{{ item.label }}</a>
-    {% endfor %}
-  </nav>
+  <a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
 
+  <!-- شريط التنقل -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">Mohamed Frame Vision</a>
+      <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
+        {% for item in site.nav %}
+        <a href="{{ item.href }}"{% if item.href == navActive %} class="active" aria-current="page"{% endif %}>{{ item.label }}</a>
+        {% endfor %}
+      </nav>
+      <div class="nav-tools">
+        <button type="button" class="nav-icon-btn sound-toggle" aria-pressed="false" aria-label="تشغيل المؤثرات الصوتية" title="تشغيل المؤثرات الصوتية">{{ icon("volume-off", 22) }}</button>
+        <button type="button" class="nav-icon-btn nav-toggle" aria-expanded="false" aria-controls="navLinks" aria-label="فتح القائمة">{{ icon("menu", 22) }}</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
   {{ content | safe }}
+  </main>
 
   <!-- التذييل -->
-  <footer{% if footerFixed %} style="position: fixed; bottom: 0; width: 100%; background: transparent; border-top: none;"{% endif %}>
+  <footer{% if footerFixed %} class="footer-fixed"{% endif %}>
     {% if footerFixed %}
     <p>&copy; 2026 Mohamed Frame Vision</p>
     {% else %}
     <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
-    <p style="margin-top: 10px; color: var(--text-dim); font-size: 13px;">
-      <a href="contact.html" style="color: var(--text-dim); border: none; padding: 0;">تواصل معنا</a> |
-      <a href="about.html" style="color: var(--text-dim); border: none; padding: 0;">عن الموقع</a> |
-      <a href="privacy-policy.html" style="color: var(--text-dim); border: none; padding: 0;">سياسة الخصوصية</a> |
-      <a href="terms.html" style="color: var(--text-dim); border: none; padding: 0;">شروط الاستخدام</a>
+    <p class="footer-links">
+      <a href="contact.html">تواصل معنا</a>
+      <a href="about.html">عن الموقع</a>
+      <a href="privacy-policy.html">سياسة الخصوصية</a>
+      <a href="terms.html">شروط الاستخدام</a>
     </p>
-    <p style="margin-top: 15px; color: var(--text-dim); font-size: 11px;">
-      📜 المحتوى مرخص تحت
-      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-         target="_blank"
-         style="color: var(--accent); text-decoration: none;">
-        CC BY-NC-SA 4.0
-      </a>
+    <p class="footer-license">
+      المحتوى مرخص تحت
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
       - ممنوع الاستخدام التجاري
     </p>
     {% endif %}
   </footer>
 
   <!-- زر العودة للأعلى -->
-  <button id="scrollToTop" aria-label="العودة للأعلى">↑</button>
+  <button type="button" id="scrollToTop" aria-label="العودة للأعلى">{{ icon("arrow-up", 22) }}</button>
 
   <!-- JavaScript -->
-  <script src="js/script.min.js?v={{ buildTime }}"></script>
+  <script src="js/script.js?v={{ buildTime }}"></script>
 </body>
 </html>

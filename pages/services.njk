@@ -9,17 +9,18 @@ keywords: "خدمات, مونتاج, تحرير فيديو, services"
 ogTitle: "خدمات Mohamed Frame Vision"
 ogDescription: "الخدمات التي أقدمها"
 ---
+{% from "icon.njk" import icon %}
   <!-- قسم الخدمات -->
-  <section class="section" style="padding-top: 120px;">
-    <h1 style="font-size: clamp(36px, 8vw, 48px); margin-bottom: 20px;">الخدمات التي أقدمها</h1>
-    <p style="max-width: 700px; margin: 0 auto 50px; color: var(--text-secondary);">
+  <section class="section page-top">
+    <h1 class="page-title">الخدمات التي أقدمها</h1>
+    <p class="page-intro">
       حلول متكاملة في عالم الفيديو والمحتوى البصري
     </p>
 
     <!-- شبكة الخدمات -->
     <div class="services-grid">
       <div class="service-card">
-        <div class="service-icon">🎥</div>
+        <div class="service-icon">{{ icon("movie-edit", 44) }}</div>
         <h3>تحرير الفيديو الاحترافي</h3>
         <p>مونتاج وتحرير فيديوهات بجودة عالية تناسب احتياجاتك</p>
         <ul>
@@ -31,7 +32,7 @@ ogDescription: "الخدمات التي أقدمها"
       </div>
 
       <div class="service-card">
-        <div class="service-icon">📱</div>
+        <div class="service-icon">{{ icon("smartphone", 44) }}</div>
         <h3>محتوى سوشيال ميديا</h3>
         <p>إنتاج محتوى متخصص لمنصات التواصل الاجتماعي</p>
         <ul>
@@ -43,7 +44,7 @@ ogDescription: "الخدمات التي أقدمها"
       </div>
 
       <div class="service-card">
-        <div class="service-icon">🌈</div>
+        <div class="service-icon">{{ icon("palette", 44) }}</div>
         <h3>تدريج الألوان</h3>
         <p>إضفاء لمسة احترافية على فيديوهاتك بألوان متقنة</p>
         <ul>
@@ -55,7 +56,7 @@ ogDescription: "الخدمات التي أقدمها"
       </div>
 
       <div class="service-card">
-        <div class="service-icon">🎬</div>
+        <div class="service-icon">{{ icon("animation", 44) }}</div>
         <h3>Motion Graphics</h3>
         <p>رسوم متحركة وتصاميم أنيميشن متقدمة</p>
         <ul>
@@ -67,7 +68,7 @@ ogDescription: "الخدمات التي أقدمها"
       </div>
 
       <div class="service-card">
-        <div class="service-icon">🎵</div>
+        <div class="service-icon">{{ icon("graphic-eq", 44) }}</div>
         <h3>معالجة الصوت</h3>
         <p>تحسين جودة الصوت وإضافة مؤثرات صوتية</p>
         <ul>
@@ -80,7 +81,7 @@ ogDescription: "الخدمات التي أقدمها"
     </div>
 
     <!-- قسم إضافي -->
-    <div style="margin-top: 80px; max-width: 800px; margin-left: auto; margin-right: auto; background: var(--surface); padding: 50px 30px; border-radius: 12px; border: 1px solid #222;">
+    <div class="panel">
       <h2 style="font-size: clamp(28px, 6vw, 36px); margin-bottom: 25px;">لماذا تختارني؟</h2>
       <div style="text-align: right; color: var(--text-secondary); line-height: 2;">
         <p style="margin-bottom: 20px;">✅ <strong style="color: var(--text);">جودة عالية:</strong> أعمل على تقديم عمل بجودة احترافية تفوق التوقعات</p>

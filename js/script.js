@@ -3,6 +3,199 @@
    ملف JavaScript الرئيسي
    ===================================== */
 
+// ===== مؤثرات صوتية (اختيارية، مطفأة افتراضياً) =====
+// نفس مجموعة أصوات هكوله: مولَّدة بالكود بالكامل (Web Audio، بلا ملفات) —
+// نغمات منخفضة، بداية ناعمة، نغمة تحتية للدفء، سلّم ري الكبير، وصدى غرفة خفيف
+const SOUND_KEY = "mfv_sound_pref";
+const NOTE = { D3: 146.83, D4: 293.66, A4: 440, D5: 587.33, "F#5": 739.99, A5: 880, D6: 1174.66 };
+let audioCtx = null;
+let sfxBus = null;
+let noiseBuffer = null;
+
+function isSoundEnabled() {
+  try {
+    return localStorage.getItem(SOUND_KEY) === "on";
+  } catch {
+    return false;
+  }
+}
+
+function makeRoomImpulse(ctx, seconds) {
+  const len = Math.floor(ctx.sampleRate * seconds);
+  const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = buf.getChannelData(c);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.5);
+  }
+  return buf;
+}
+
+function getSfxBus(ctx) {
+  if (sfxBus) return sfxBus;
+  sfxBus = ctx.createGain();
+  const soften = ctx.createBiquadFilter();
+  soften.type = "lowpass";
+  soften.frequency.value = 4500;
+  const dry = ctx.createGain();
+  dry.gain.value = 0.85;
+  const verb = ctx.createConvolver();
+  verb.buffer = makeRoomImpulse(ctx, 1.4);
+  const wet = ctx.createGain();
+  wet.gain.value = 0.22;
+  sfxBus.connect(soften);
+  soften.connect(dry).connect(ctx.destination);
+  soften.connect(verb).connect(wet).connect(ctx.destination);
+  return sfxBus;
+}
+
+function voice(ctx, bus, { freq, at = 0, attack = 0.004, decay = 0.08, gain = 0.06, glide = 1, pan = 0 }) {
+  const t0 = ctx.currentTime + at;
+  const end = t0 + attack + decay;
+  const osc = ctx.createOscillator();
+  osc.frequency.setValueAtTime(freq, t0);
+  if (glide !== 1) osc.frequency.exponentialRampToValueAtTime(freq * glide, end);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + attack);
+  g.gain.exponentialRampToValueAtTime(0.0001, end);
+  osc.connect(g);
+  if (pan && ctx.createStereoPanner) {
+    const p = ctx.createStereoPanner();
+    p.pan.value = pan;
+    g.connect(p).connect(bus);
+  } else {
+    g.connect(bus);
+  }
+  osc.start(t0);
+  osc.stop(end + 0.02);
+}
+
+function noise(ctx, bus, { at = 0, dur = 0.01, freq = 3000, q = 0.8, gain = 0.05, sweepTo = 0 }) {
+  if (!noiseBuffer) {
+    noiseBuffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const d = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  const t0 = ctx.currentTime + at;
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuffer;
+  const f = ctx.createBiquadFilter();
+  f.type = "bandpass";
+  f.Q.value = q;
+  f.frequency.setValueAtTime(freq, t0);
+  if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t0 + dur);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(0.002, dur / 3));
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(f).connect(g).connect(bus);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+const SOUNDS = {
+  tap(ctx, bus) {
+    const f = NOTE.A4 * (1 + (Math.random() - 0.5) * 0.06);
+    voice(ctx, bus, { freq: f, decay: 0.07, gain: 0.07, glide: 0.88 });
+    voice(ctx, bus, { freq: f * 1.7, decay: 0.04, gain: 0.018 });
+    voice(ctx, bus, { freq: f / 2, decay: 0.09, gain: 0.03 });
+  },
+  on(ctx, bus) {
+    voice(ctx, bus, { freq: NOTE.D5, decay: 0.35, gain: 0.06 });
+    voice(ctx, bus, { freq: NOTE.D3, decay: 0.5, gain: 0.05 });
+    voice(ctx, bus, { freq: NOTE.A5, at: 0.07, decay: 0.3, gain: 0.035, pan: 0.15 });
+  },
+  off(ctx, bus) {
+    voice(ctx, bus, { freq: NOTE.A4, decay: 0.25, gain: 0.05, glide: 0.94 });
+    voice(ctx, bus, { freq: NOTE.A4 / 4, decay: 0.3, gain: 0.04 });
+    voice(ctx, bus, { freq: NOTE.D4, at: 0.06, decay: 0.22, gain: 0.03, pan: -0.15 });
+  },
+  open(ctx, bus) {
+    [NOTE.D5, NOTE["F#5"], NOTE.A5].forEach((freq, i) =>
+      voice(ctx, bus, { freq, at: i * 0.045, attack: 0.01, decay: 0.6, gain: 0.03, pan: (i - 1) * 0.2 })
+    );
+    voice(ctx, bus, { freq: NOTE.D3, decay: 0.5, gain: 0.03 });
+  },
+  close(ctx, bus) {
+    noise(ctx, bus, { dur: 0.12, freq: 1800, sweepTo: 400, q: 0.7, gain: 0.035 });
+    voice(ctx, bus, { freq: 130, decay: 0.3, gain: 0.07, glide: 0.8 });
+  },
+  success(ctx, bus) {
+    [NOTE.D5, NOTE["F#5"], NOTE.A5, NOTE.D6].forEach((freq, i) =>
+      voice(ctx, bus, { freq, at: i * 0.06, attack: 0.02, decay: 1.0, gain: 0.03, pan: -0.3 + i * 0.2 })
+    );
+    voice(ctx, bus, { freq: NOTE.D3, decay: 0.8, gain: 0.04 });
+  },
+};
+
+function playSound(name) {
+  if (!isSoundEnabled()) return;
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  SOUNDS[name](audioCtx, getSfxBus(audioCtx));
+}
+
+// أيقونات الأزرار اللي تتغير حالتها وقت التشغيل (نفس مسارات icon.njk)
+const ICONS = {
+  "menu": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>',
+  "close": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>',
+  "volume-up": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/></svg>',
+  "volume-off": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/></svg>',
+};
+
+function initSoundToggle() {
+  const btn = document.querySelector(".sound-toggle");
+  if (!btn) return;
+  function apply(enabled) {
+    btn.setAttribute("aria-pressed", String(enabled));
+    btn.innerHTML = enabled ? ICONS["volume-up"] : ICONS["volume-off"];
+    const label = enabled ? "إيقاف المؤثرات الصوتية" : "تشغيل المؤثرات الصوتية";
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+  }
+  apply(isSoundEnabled());
+  btn.addEventListener("click", () => {
+    const next = !isSoundEnabled();
+    try {
+      localStorage.setItem(SOUND_KEY, next ? "on" : "off");
+    } catch {
+      /* التخزين ممنوع (وضع خاص) — التبديل يشتغل لهالصفحة بس */
+    }
+    apply(next);
+    if (next) playSound("on");
+  });
+}
+
+// ===== قائمة الجوال =====
+function initNavToggle() {
+  const nav = document.querySelector(".nav");
+  const btn = document.querySelector(".nav-toggle");
+  if (!nav || !btn) return;
+  function setOpen(open) {
+    nav.classList.toggle("open", open);
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "إغلاق القائمة" : "فتح القائمة");
+    btn.innerHTML = open ? ICONS.close : ICONS.menu;
+  }
+  btn.addEventListener("click", () => {
+    const open = !nav.classList.contains("open");
+    setOpen(open);
+    playSound(open ? "open" : "close");
+  });
+  // composedPath لا nav.contains(e.target): setOpen تبدّل أيقونة الزر نفسه
+  // (innerHTML) أثناء نفس الضغطة، فالعنصر المضغوط ينحذف من الصفحة قبل ما
+  // يوصل هنا ويبان كأنه "برّا القائمة" — كانت القائمة تنقفل فور ما تنفتح
+  document.addEventListener("click", (e) => {
+    if (nav.classList.contains("open") && !e.composedPath().includes(nav)) setOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav.classList.contains("open")) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+}
+
 // ===== إدارة النافذة المنبثقة =====
 function openModal() {
   const modal = document.getElementById("contactModal");
@@ -10,15 +203,18 @@ function openModal() {
     modal.style.display = "flex";
     // منع التمرير عند فتح النافذة المنبثقة
     document.body.style.overflow = "hidden";
+    playSound("open");
+    modal.querySelector(".close-btn")?.focus();
   }
 }
 
 function closeModal() {
   const modal = document.getElementById("contactModal");
-  if (modal) {
+  if (modal && modal.style.display === "flex") {
     modal.style.display = "none";
     // إعادة تفعيل التمرير
     document.body.style.overflow = "auto";
+    playSound("close");
   }
 }
 
@@ -64,22 +260,6 @@ function initLazyVideos() {
   });
 }
 
-// ===== تفعيل الرابط النشط في شريط التنقل =====
-function setActiveNavLink() {
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  const navLinks = document.querySelectorAll('.nav a');
-  
-  navLinks.forEach(link => {
-    link.classList.remove('active');
-    const linkHref = link.getAttribute('href');
-    
-    if (linkHref === currentPage || 
-        (currentPage === '' && linkHref === 'index.html')) {
-      link.classList.add('active');
-    }
-  });
-}
-
 // ===== فلترة المشاريع =====
 function filterProjects(category) {
   const projectCards = document.querySelectorAll('.project-card');
@@ -99,11 +279,16 @@ function filterProjects(category) {
     
     if (category === 'all' || cardCategory === category) {
       card.style.display = 'block';
-      // إضافة رسم متحرك عند الظهور
+      // إضافة رسم متحرك عند الظهور — ثم نشيل القيم المضمّنة، وإلا تلغي
+      // حركة الارتفاع عند مرور الماوس (:hover) المكتوبة بملف CSS
       setTimeout(() => {
         card.style.opacity = '1';
         card.style.transform = 'scale(1)';
       }, 10);
+      setTimeout(() => {
+        card.style.opacity = '';
+        card.style.transform = '';
+      }, 400);
     } else {
       card.style.opacity = '0';
       card.style.transform = 'scale(0.8)';
@@ -383,6 +568,7 @@ function showFormMessage(type, message) {
   
   formMessage.textContent = message;
   formMessage.style.display = 'block';
+  playSound(type === 'success' ? 'success' : 'off');
   
   if (type === 'success') {
     formMessage.style.background = 'rgba(16, 185, 129, 0.1)';
@@ -405,26 +591,42 @@ function showFormMessage(type, message) {
   }
 }
 
-// ===== تأثيرات التمرير =====
+// ===== دخول البطاقات عند التمرير (نفس حركة بطاقات هكوله) =====
+// كل بطاقة تبدأ مخفية، أكبر قليلاً ومزاحة للخارج حسب عمودها (يمين/يسار/تحت)،
+// وأول ما يوصلها التمرير تنزلق لمكانها. بكلاسات لا قيم مضمّنة — الكود القديم
+// كان يحط transform مضمّن على البطاقات فيلغي حركة المرور (:hover) بالكامل
 function initScrollAnimations() {
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-  
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cards = [...document.querySelectorAll('.project-card, .skill-card, .service-card, .resource-card, .tip-card')];
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    const grid = card.parentElement.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+    const dx = r.left + r.width / 2 - (grid.left + grid.width / 2);
+    card.style.setProperty('--fx', `${Math.max(-220, Math.min(220, dx * 0.6))}px`);
+    card.classList.add('fly-pending');
+  });
+
+  // المراقبة على البطاقة وهي مزاحة لتحت، فالهامش السفلي يعوّض الإزاحة —
+  // وإلا بطاقات أسفل الشاشة تبقى مخفية وقت فتح الصفحة
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
+    entries.forEach(({ target, isIntersecting }) => {
+      if (!isIntersecting) return;
+      observer.unobserve(target);
+      target.classList.remove('fly-pending');
+      target.classList.add('card-in');
     });
-  }, observerOptions);
-  
-  // مراقبة جميع الأقسام
-  const sections = document.querySelectorAll('.section, .project-card, .skill-card, .service-card');
-  sections.forEach(section => {
-    observer.observe(section);
+  }, { rootMargin: '0px 0px 200px 0px' });
+
+  cards.forEach((card) => {
+    observer.observe(card);
+    card.addEventListener('transitionend', function done(e) {
+      if (e.target !== card || e.propertyName !== 'transform') return;
+      card.classList.remove('card-in');
+      card.removeEventListener('transitionend', done);
+    });
   });
 }
 
@@ -464,6 +666,8 @@ function initDisclaimerToggle() {
   toggle.addEventListener('click', () => {
     const expanded = body.classList.toggle('expanded');
     toggle.textContent = expanded ? 'اقرأ أقل ▴' : 'اقرأ المزيد ▾';
+    toggle.setAttribute('aria-expanded', String(expanded));
+    playSound(expanded ? 'open' : 'close');
   });
 }
 
@@ -474,13 +678,14 @@ function initScrollToTop() {
   if (scrollBtn) {
     window.addEventListener('scroll', () => {
       if (window.pageYOffset > 300) {
-        scrollBtn.style.display = 'block';
+        scrollBtn.style.display = 'flex';
       } else {
         scrollBtn.style.display = 'none';
       }
     });
     
     scrollBtn.addEventListener('click', () => {
+      playSound('tap');
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
@@ -496,9 +701,14 @@ window.addEventListener('load', () => {
 
 // ===== تهيئة جميع الوظائف عند تحميل الصفحة =====
 document.addEventListener('DOMContentLoaded', function() {
-  // تفعيل الرابط النشط
-  setActiveNavLink();
-  
+  initSoundToggle();
+  initNavToggle();
+
+  // زر "تواصل الآن" وزر إغلاق النافذة (كانا onclick مضمّن على عناصر ما
+  // تنوصل بلوحة المفاتيح — الحين أزرار حقيقية)
+  document.querySelectorAll('[data-open-modal]').forEach((el) => el.addEventListener('click', openModal));
+  document.querySelectorAll('[data-close-modal]').forEach((el) => el.addEventListener('click', closeModal));
+
   // تفعيل Lazy Loading للفيديوهات
   initLazyVideos();
   
@@ -525,6 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
   filterButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       filterProjects(btn.dataset.filter);
+      playSound('tap');
     });
   });
 
@@ -533,6 +744,7 @@ document.addEventListener('DOMContentLoaded', function() {
   platformButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       filterCreators(btn.dataset.platformFilter);
+      playSound('tap');
     });
   });
 
