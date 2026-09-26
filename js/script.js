@@ -311,7 +311,7 @@ function initWorkStack() {
         stage.setPointerCapture(e.pointerId);
         stage.classList.add('dragging');
       }
-      if (drag.moved) go(drag.start - (dy + dx) / 120);
+      if (drag.moved) go(drag.start + (dy + dx) / 120);
     }
     // ملصق اسم العمل عند مرور الماوس (Avara)
     if (e.pointerType === 'mouse' && !drag?.moved) {
