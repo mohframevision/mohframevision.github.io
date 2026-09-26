@@ -2,6 +2,8 @@
 layout: base.njk
 permalink: index.html
 navActive: index.html
+bodyClass: page-home
+footerFixed: true
 title: "Mohamed Frame Vision | محمد فريم فيجن - مونتاج احترافي"
 canonical: ""
 description: "محمد فريم فيجن - محرر فيديو متخصص في صناعة محتوى سوشيال ميديا بأسلوب بصري فاخر للعلامات التجارية. Premium video editing for social brands."
@@ -35,80 +37,52 @@ schemaJSON: |
   }
 ---
 {% from "icon.njk" import icon %}
-  <!-- النافذة المنبثقة للتواصل -->
-  <div class="modal" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
-    <div class="modal-content">
-      <h3 id="contactModalTitle">للتواصل و روابطي</h3>
-      <ul class="modal-links">
-        <li><a href="mailto:mohframevision@outlook.com">{{ icon("mail", 20) }} mohframevision@outlook.com</a></li>
-        <li><a href="https://youtube.com/@mohframevision" target="_blank" rel="noopener">{{ icon("smart-display", 20) }} يوتيوب</a></li>
-        <li><a href="https://www.instagram.com/mohframevision" target="_blank" rel="noopener">{{ icon("photo-camera", 20) }} إنستقرام</a></li>
-        <li><a href="https://www.tiktok.com/@mohframevision" target="_blank" rel="noopener">{{ icon("music-note", 20) }} تيك توك</a></li>
-        <li><a href="https://linktr.ee/f5r.tr" target="_blank" rel="noopener">{{ icon("language", 20) }} linktr.ee/f5r.tr</a></li>
-      </ul>
-      <button type="button" class="close-btn" data-close-modal>إغلاق</button>
-    </div>
-  </div>
+  <h1 class="sr-only">Mohamed Frame Vision — محرر فيديو: مونتاج احترافي يعكس هوية علامتك</h1>
 
-  <!-- قسم Hero -->
-  <div class="hero">
-    <h1>Mohamed Frame Vision</h1>
-    <p class="subtitle">
-      مونتاج احترافي يعكس هوية علامتك
-      <span class="en-sub">Premium Video Editing for Social Brands</span>
-    </p>
-    <button type="button" class="btn" data-open-modal>تواصل الآن</button>
-  </div>
-
-  <!-- بانر نقش ستوديو -->
-  <section class="section section-tight">
-    <div class="panel">
-      <div class="panel-icon">{{ icon("movie", 40) }}</div>
-      <h2 class="panel-title">نقش ستوديو</h2>
-      <p class="panel-text">
-        فريق إنتاج مرئي متكامل مقره البحرين — من الفكرة والتخطيط إلى التصوير السينمائي والمونتاج والرسوم المتحركة.
-      </p>
-      <a href="naqsh.html" class="btn">تعرّف على نقش ستوديو</a>
+  <!-- رصّة الأعمال ثلاثية الأبعاد (Unveil): عجلة الماوس/السحب تتنقل بينها،
+       والضغط يفتح الفيديو. البطاقات أزرار حقيقية (لوحة المفاتيح/قارئ الشاشة) -->
+  <section class="stack-stage" aria-label="أعمالي">
+    <div class="stack" id="workStack">
+      {% for p in projectList %}
+      <button type="button" class="stack-card" data-index="{{ loop.index0 }}" data-youtube="{{ p.youtubeId }}" data-title="{{ p.title }}" data-desc="{{ p.description }}" aria-label="{{ p.title }} — تشغيل الفيديو">
+        <img src="https://i.ytimg.com/vi/{{ p.youtubeId }}/hqdefault.jpg" alt="" width="480" height="360" decoding="async"{% if loop.index0 > 5 %} loading="lazy"{% endif %}>
+      </button>
+      {% endfor %}
     </div>
+    <div class="stack-label" id="stackLabel" aria-hidden="true"></div>
   </section>
 
-  <!-- قسم الأعمال -->
-  <section class="section">
-    <h2>أعمالي</h2>
+  <!-- عنوان العمل الحالي ورقمه (يفيد باللمس حيث ما فيه مرور ماوس) -->
+  <p class="stack-caption" id="stackCaption" aria-live="polite"></p>
+  <p class="stack-hint" id="stackHint">مرّر أو اسحب للتنقل بين الأعمال</p>
 
-    <!-- فيديو 1 - مع Lazy Loading -->
-    <div class="video-block">
-      <iframe
-        data-src="https://www.youtube.com/embed/symsPVXeHso?rel=0&modestbranding=1"
-        allowfullscreen
-        title="فيلم قصير"
-        loading="lazy">
-      </iframe>
-      <p class="video-title">فيلم قصير</p>
+  <!-- عرض القائمة (INDEX): روابط يوتيوب حقيقية، تشتغل بلا جافاسكربت -->
+  <div class="stack-index" id="stackIndex" hidden>
+    <ol>
+      {% for p in projectList %}
+      <li><a href="https://www.youtube.com/watch?v={{ p.youtubeId }}" target="_blank" rel="noopener" data-index="{{ loop.index0 }}">
+        <span class="stack-index-num">{{ ("0" + loop.index) if loop.index < 10 else loop.index }}</span>
+        <span class="stack-index-title">{{ p.title }}</span>
+        <span class="stack-index-desc">{{ p.description }}</span>
+      </a></li>
+      {% endfor %}
+    </ol>
+  </div>
+  <noscript><style>.stack-stage,.view-switch,.stack-hint{display:none}.stack-index{display:block!important}</style></noscript>
+
+  <div class="view-switch" role="group" aria-label="طريقة العرض">
+    <button type="button" class="view-btn active" data-view="stack" aria-pressed="true">العرض</button>
+    <button type="button" class="view-btn" data-view="index" aria-pressed="false">القائمة</button>
+  </div>
+
+  <!-- مشغّل الفيديو -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle" hidden>
+    <div class="lightbox-inner">
+      <div class="lightbox-video"><iframe id="lightboxFrame" title="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="lightbox-meta">
+        <h2 id="lightboxTitle"></h2>
+        <p id="lightboxDesc"></p>
+      </div>
+      <button type="button" class="nav-tile lightbox-close" id="lightboxClose" aria-label="إغلاق">{{ icon("close", 20) }}</button>
     </div>
-
-    <!-- فيديو 2 -->
-    <div class="video-block">
-      <iframe
-        data-src="https://www.youtube.com/embed/7fmxawblyUA?rel=0&modestbranding=1"
-        allowfullscreen
-        title="مراجعة لشاشة من ديفو"
-        loading="lazy">
-      </iframe>
-      <p class="video-title">مراجعة لشاشة من ديفو</p>
-    </div>
-
-    <!-- فيديو 3 -->
-    <div class="video-block">
-      <iframe
-        data-src="https://www.youtube.com/embed/PHSY6rlljSM?rel=0&modestbranding=1"
-        allowfullscreen
-        title="من صورة إلى فيديو: تجربة سريعة بين Blender و الذكاء الاصطناعي"
-        loading="lazy">
-      </iframe>
-      <p class="video-title">من صورة إلى فيديو: تجربة سريعة بين Blender و الذكاء الاصطناعي</p>
-    </div>
-
-    <!-- زر لعرض المزيد -->
-    <a href="projects.html" class="btn">عرض جميع المشاريع</a>
-  </section>
+  </div>

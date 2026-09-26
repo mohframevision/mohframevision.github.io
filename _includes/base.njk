@@ -73,12 +73,11 @@
   <link rel="preconnect" href="https://i.ytimg.com">
   {% endif %}
 
-  <!-- خط عربي احترافي (300 إضافي للعناوين الكبيرة) + خط سيريف إنجليزي للمسات
-       التحريرية (اقتباس "About" والنص الإنجليزي الفرعي) — Playfair Display
-       ما له حروف عربية أصلاً، فيسقط تلقائياً على Cairo بأي نص عربي يستخدمه -->
+  <!-- خطوط "سويسرية" محايدة بروح Unveil/Avara: Inter للاتيني و IBM Plex
+       Sans Arabic للعربي (نفس العائلة الشكلية، الاثنين مجانيين) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
   {# بالتطوير (eleventy --serve) الملف الأصلي مباشرة: styles.min.css ما
@@ -94,45 +93,44 @@
   {% endif %}
 </head>
 
-<body>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
   <a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
 
-  <!-- شريط التنقل -->
+  <!-- شريط التنقل: بلاطات زجاجية صغيرة (Unveil) -->
   <header class="nav">
     <div class="nav-inner">
-      <a class="nav-brand" href="index.html">Mohamed Frame Vision</a>
+      <a class="nav-tile nav-brand" href="index.html"{% if navActive == "index.html" %} aria-current="page"{% endif %}>Mohamed Frame Vision</a>
       <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
-        {% for item in site.nav %}
-        <a href="{{ item.href }}"{% if item.href == navActive %} class="active" aria-current="page"{% endif %}>{{ item.label }}</a>
-        {% endfor %}
+        {% for item in site.nav %}{% if item.href != "index.html" %}
+        <a class="nav-tile{% if item.href == navActive %} active{% endif %}" href="{{ item.href }}"{% if item.href == navActive %} aria-current="page"{% endif %}>{{ item.label }}</a>
+        {% endif %}{% endfor %}
       </nav>
-      <div class="nav-tools">
-        <button type="button" class="nav-icon-btn sound-toggle" aria-pressed="false" aria-label="تشغيل المؤثرات الصوتية" title="تشغيل المؤثرات الصوتية">{{ icon("volume-off", 22) }}</button>
-        <button type="button" class="nav-icon-btn nav-toggle" aria-expanded="false" aria-controls="navLinks" aria-label="فتح القائمة">{{ icon("menu", 22) }}</button>
-      </div>
+      <button type="button" class="nav-tile nav-toggle" aria-expanded="false" aria-controls="navLinks" aria-label="فتح القائمة">{{ icon("menu", 20) }}</button>
     </div>
   </header>
+
+  <!-- زر الصوت وحده بالزاوية (Avara) -->
+  <button type="button" class="corner-btn sound-toggle" aria-pressed="false" aria-label="تشغيل المؤثرات الصوتية" title="تشغيل المؤثرات الصوتية">{{ icon("volume-off", 20) }}</button>
 
   <main id="main">
   {{ content | safe }}
   </main>
 
-  <!-- التذييل -->
-  <footer{% if footerFixed %} class="footer-fixed"{% endif %}>
-    {% if footerFixed %}
-    <p>&copy; 2026 Mohamed Frame Vision</p>
-    {% else %}
-    <p>© 2026 Mohamed Frame Vision - جميع الحقوق محفوظة</p>
+  <!-- التذييل: اسم بالمنتصف وروابط صغيرة (Avara) -->
+  <footer class="site-footer{% if footerFixed %} footer-fixed{% endif %}">
+    <a class="footer-mark" href="index.html">Mohamed Frame Vision</a>
     <p class="footer-links">
-      <a href="contact.html">تواصل معنا</a>
-      <a href="about.html">عن الموقع</a>
+      <a href="https://youtube.com/@mohframevision" target="_blank" rel="noopener">يوتيوب</a>
+      <a href="https://www.instagram.com/mohframevision" target="_blank" rel="noopener">إنستقرام</a>
+      <a href="https://www.tiktok.com/@mohframevision" target="_blank" rel="noopener">تيك توك</a>
+      <a href="contact.html">تواصل</a>
+    </p>
+    {% if not footerFixed %}
+    <p class="footer-legal">
+      <span>© 2026</span>
       <a href="privacy-policy.html">سياسة الخصوصية</a>
       <a href="terms.html">شروط الاستخدام</a>
-    </p>
-    <p class="footer-license">
-      المحتوى مرخص تحت
-      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
-      - ممنوع الاستخدام التجاري
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0 — ممنوع الاستخدام التجاري</a>
     </p>
     {% endif %}
   </footer>

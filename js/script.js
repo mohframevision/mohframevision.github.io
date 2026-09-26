@@ -94,6 +94,9 @@ function noise(ctx, bus, { at = 0, dur = 0.01, freq = 3000, q = 0.8, gain = 0.05
 }
 
 const SOUNDS = {
+  tick(ctx, bus) {
+    noise(ctx, bus, { dur: 0.006, freq: 3000, gain: 0.07 });
+  },
   tap(ctx, bus) {
     const f = NOTE.A4 * (1 + (Math.random() - 0.5) * 0.06);
     voice(ctx, bus, { freq: f, decay: 0.07, gain: 0.07, glide: 0.88 });
@@ -196,42 +199,222 @@ function initNavToggle() {
   });
 }
 
-// ===== إدارة النافذة المنبثقة =====
-function openModal() {
-  const modal = document.getElementById("contactModal");
-  if (modal) {
-    modal.style.display = "flex";
-    // منع التمرير عند فتح النافذة المنبثقة
-    document.body.style.overflow = "hidden";
-    playSound("open");
-    modal.querySelector(".close-btn")?.focus();
-  }
-}
+// ===== الصفحة الرئيسية: رصّة الأعمال ثلاثية الأبعاد (Unveil) =====
+// "pos" رقم عشري = البطاقة اللي بالمقدمة؛ العجلة/السحب/الأسهم تغيّر "target"
+// ونقرّب pos له تدريجياً كل إطار (حركة ناعمة). البطاقة i على بُعد d = i - pos:
+// كل ما زاد d تبعد للخلف ولفوق ولليسار (مقلوبة عن Unveil لأن الموقع RTL)،
+// واللي عدّت (d < 0) تقرّب للمشاهد وتختفي
+function initWorkStack() {
+  const stage = document.querySelector('.stack-stage');
+  if (!stage) return;
+  const cards = [...stage.querySelectorAll('.stack-card')];
+  const N = cards.length;
+  const label = document.getElementById('stackLabel');
+  const caption = document.getElementById('stackCaption');
+  const hint = document.getElementById('stackHint');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pos = 0;
+  let target = 0;
+  let hovered = -1;
+  let shownIndex = -1;
+  let frame = null;
 
-function closeModal() {
-  const modal = document.getElementById("contactModal");
-  if (modal && modal.style.display === "flex") {
-    modal.style.display = "none";
-    // إعادة تفعيل التمرير
-    document.body.style.overflow = "auto";
-    playSound("close");
-  }
-}
+  const layout = () =>
+    window.innerWidth <= 700
+      ? { x: -24, y: -64, z: -210, bx: 0, by: 40, rot: 20 }
+      : { x: -108, y: -62, z: -250, bx: window.innerWidth * 0.12, by: window.innerHeight * 0.1, rot: 28 };
+  let L = layout();
 
-// إغلاق النافذة المنبثقة عند النقر خارج المحتوى
-window.onclick = function(event) {
-  const modal = document.getElementById("contactModal");
-  if (event.target === modal) {
-    closeModal();
+  function render() {
+    cards.forEach((card, i) => {
+      const d = i - pos;
+      let opacity = 1;
+      if (d < 0) opacity = Math.max(0, 1 + d * 1.6);
+      else if (d > 9) opacity = Math.max(0, 1 - (d - 9) / 4);
+      card.style.opacity = opacity.toFixed(3);
+      card.style.visibility = opacity < 0.01 ? 'hidden' : '';
+      // البطاقة اللي تطلع (تتلاشى قدّام) تبقى شبه شفافة لكنها أقرب للمشاهد،
+      // فتلقط الضغطة بدل البطاقة الحالية اللي تحتها — نوقف تفاعلها من بدري
+      card.style.pointerEvents = d < -0.3 ? 'none' : '';
+      const lift = i === hovered ? 45 : 0;
+      card.style.transform = `translate3d(${L.bx + d * L.x}px, ${L.by + d * L.y}px, ${d * L.z + lift}px) rotateY(${L.rot}deg)`;
+    });
   }
-}
 
-// إغلاق النافذة المنبثقة بزر Escape
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    closeModal();
+  function updateCaption() {
+    const i = Math.max(0, Math.min(N - 1, Math.round(pos)));
+    if (i === shownIndex) return;
+    if (shownIndex !== -1) playSound('tick');
+    shownIndex = i;
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.dir = 'ltr';
+    num.textContent = `${String(i + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`;
+    caption.replaceChildren(num, document.createTextNode(cards[i].dataset.title));
   }
-});
+
+  function step() {
+    pos += (target - pos) * (reduceMotion ? 1 : 0.1);
+    if (Math.abs(target - pos) < 0.001) pos = target;
+    render();
+    updateCaption();
+    frame = pos === target ? null : requestAnimationFrame(step);
+  }
+
+  // بعد ما يوقف التمرير/السحب نثبّت على أقرب بطاقة كاملة — وإلا تستقر الرصّة
+  // بين بطاقتين (مثلاً 8.4): البطاقة الحالية نص شفافة، واللي قبلها باقية
+  // قدّامها وتلقط الضغطة، والرقم المعروض ما يطابق البطاقة الواضحة
+  let snapTimer = null;
+  function snap() {
+    clearTimeout(snapTimer);
+    snapTimer = null;
+    go(Math.round(target), true);
+  }
+
+  function go(t, fromSnap) {
+    target = Math.max(0, Math.min(N - 1, t));
+    hint.classList.add('gone');
+    if (!fromSnap && !drag?.moved) {
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snap, 160);
+    }
+    if (!frame) frame = requestAnimationFrame(step);
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (document.body.classList.contains('view-index') || !lightbox.hidden) return;
+    e.preventDefault();
+    // الملصق يتبع المؤشر — مع العجلة تتحرك البطاقات من تحته فنخفيه
+    hovered = -1;
+    label.classList.remove('show');
+    go(target + e.deltaY * 0.0035);
+  }, { passive: false });
+
+  // سحب باللمس أو الماوس — وضغطة بلا سحب تفتح الفيديو
+  let drag = null;
+  stage.addEventListener('pointerdown', (e) => {
+    drag = { x: e.clientX, y: e.clientY, start: target, moved: false, id: e.pointerId };
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (drag && e.pointerId === drag.id) {
+      const dx = e.clientX - drag.x;
+      const dy = e.clientY - drag.y;
+      if (!drag.moved && Math.hypot(dx, dy) > 6) {
+        drag.moved = true;
+        stage.setPointerCapture(e.pointerId);
+        stage.classList.add('dragging');
+      }
+      if (drag.moved) go(drag.start - (dy + dx) / 120);
+    }
+    // ملصق اسم العمل عند مرور الماوس (Avara)
+    if (e.pointerType === 'mouse' && !drag?.moved) {
+      const card = e.target.closest('.stack-card');
+      const i = card ? cards.indexOf(card) : -1;
+      if (i !== hovered) {
+        hovered = i;
+        if (!frame) render();
+      }
+      label.classList.toggle('show', i !== -1);
+      if (card) {
+        label.textContent = card.dataset.title;
+        label.style.left = `${e.clientX}px`;
+        label.style.top = `${e.clientY}px`;
+      }
+    }
+  });
+  const endDrag = () => {
+    if (drag?.moved) {
+      stage.classList.remove('dragging');
+      snap();
+    }
+    setTimeout(() => (drag = null), 0);
+  };
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+  stage.addEventListener('pointerleave', () => {
+    hovered = -1;
+    label.classList.remove('show');
+    if (!frame) render();
+  });
+
+  cards.forEach((card, i) => {
+    card.addEventListener('click', () => {
+      if (drag?.moved) return;
+      openLightbox(i);
+    });
+    // التنقل بـTab يجيب البطاقة للمقدمة
+    card.addEventListener('focus', () => go(i));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.hidden || document.body.classList.contains('view-index')) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') go(Math.round(target) + 1);
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowRight') go(Math.round(target) - 1);
+    else return;
+    e.preventDefault();
+  });
+
+  // ===== مشغّل الفيديو =====
+  const lightbox = document.getElementById('lightbox');
+  const lbFrame = document.getElementById('lightboxFrame');
+  let lastFocus = null;
+  function openLightbox(i) {
+    const card = cards[i];
+    lastFocus = document.activeElement;
+    lbFrame.src = `https://www.youtube-nocookie.com/embed/${card.dataset.youtube}?autoplay=1&rel=0`;
+    lbFrame.title = card.dataset.title;
+    document.getElementById('lightboxTitle').textContent = card.dataset.title;
+    document.getElementById('lightboxDesc').textContent = card.dataset.desc;
+    lightbox.hidden = false;
+    document.getElementById('lightboxClose').focus();
+    playSound('open');
+  }
+  function closeLightbox() {
+    if (lightbox.hidden) return;
+    lightbox.hidden = true;
+    lbFrame.src = 'about:blank';
+    playSound('close');
+    lastFocus?.focus({ preventScroll: true });
+  }
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // ===== عرض الرصّة / القائمة (OVERVIEW / INDEX) =====
+  const index = document.getElementById('stackIndex');
+  document.querySelectorAll('.view-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const toIndex = btn.dataset.view === 'index';
+      document.body.classList.toggle('view-index', toIndex);
+      index.hidden = !toIndex;
+      document.querySelectorAll('.view-btn').forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+      playSound('tap');
+    });
+  });
+  index.querySelectorAll('a[data-index]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+      e.preventDefault();
+      openLightbox(Number(a.dataset.index));
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    L = layout();
+    render();
+  });
+
+  render();
+  updateCaption();
+}
 
 // ===== Lazy Loading للفيديوهات =====
 function initLazyVideos() {
@@ -749,10 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initSoundToggle();
   initNavToggle();
 
-  // زر "تواصل الآن" وزر إغلاق النافذة (كانا onclick مضمّن على عناصر ما
-  // تنوصل بلوحة المفاتيح — الحين أزرار حقيقية)
-  document.querySelectorAll('[data-open-modal]').forEach((el) => el.addEventListener('click', openModal));
-  document.querySelectorAll('[data-close-modal]').forEach((el) => el.addEventListener('click', closeModal));
+  initWorkStack();
 
   // تفعيل Lazy Loading للفيديوهات
   initLazyVideos();
@@ -844,8 +1024,6 @@ document.addEventListener('contextmenu', function(event) {
 
 // ===== تصدير الوظائف للاستخدام العام =====
 window.portfolioFunctions = {
-  openModal,
-  closeModal,
   filterProjects,
   filterCreators,
   searchResources,
