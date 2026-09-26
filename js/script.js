@@ -8,6 +8,8 @@
 // نغمات منخفضة، بداية ناعمة، نغمة تحتية للدفء، سلّم ري الكبير، وصدى غرفة خفيف
 const SOUND_KEY = "mfv_sound_pref";
 const NOTE = { D3: 146.83, D4: 293.66, A4: 440, D5: 587.33, "F#5": 739.99, A5: 880, D6: 1174.66 };
+// سلّم ري الكبير من D5 صعوداً — لنغمات صفحة هكوله المتتالية
+const SCALE = [587.33, 659.25, 739.99, 880, 987.77, 1174.66, 1318.51, 1479.98];
 let audioCtx = null;
 let sfxBus = null;
 let noiseBuffer = null;
@@ -70,15 +72,19 @@ function voice(ctx, bus, { freq, at = 0, attack = 0.004, decay = 0.08, gain = 0.
   osc.stop(end + 0.02);
 }
 
-function noise(ctx, bus, { at = 0, dur = 0.01, freq = 3000, q = 0.8, gain = 0.05, sweepTo = 0 }) {
+function getNoise(ctx) {
   if (!noiseBuffer) {
     noiseBuffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const d = noiseBuffer.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   }
+  return noiseBuffer;
+}
+
+function noise(ctx, bus, { at = 0, dur = 0.01, freq = 3000, q = 0.8, gain = 0.05, sweepTo = 0, attack = Math.min(0.002, dur / 3) }) {
   const t0 = ctx.currentTime + at;
   const src = ctx.createBufferSource();
-  src.buffer = noiseBuffer;
+  src.buffer = getNoise(ctx);
   const f = ctx.createBiquadFilter();
   f.type = "bandpass";
   f.Q.value = q;
@@ -86,7 +92,7 @@ function noise(ctx, bus, { at = 0, dur = 0.01, freq = 3000, q = 0.8, gain = 0.05
   if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t0 + dur);
   const g = ctx.createGain();
   g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(0.002, dur / 3));
+  g.gain.exponentialRampToValueAtTime(gain, t0 + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   src.connect(f).connect(g).connect(bus);
   src.start(t0);
@@ -129,14 +135,155 @@ const SOUNDS = {
     );
     voice(ctx, bus, { freq: NOTE.D3, decay: 0.8, gain: 0.04 });
   },
+  // لمعة لما توصل بطاقة هكوله للمقدمة (بدل النقرة العادية)
+  shimmer(ctx, bus) {
+    [NOTE.A5, NOTE.D6, SCALE[7]].forEach((freq, i) =>
+      voice(ctx, bus, { freq, at: i * 0.03, attack: 0.005, decay: 0.35, gain: 0.022, pan: -0.2 + i * 0.2 })
+    );
+    noise(ctx, bus, { dur: 0.25, freq: 6000, sweepTo: 9000, q: 1.5, gain: 0.012 });
+  },
+  // دخول هكوله: اندفاعة هواء صاعدة ثم أربيجيو سريع
+  hakolah(ctx, bus) {
+    noise(ctx, bus, { dur: 0.35, attack: 0.25, freq: 500, sweepTo: 5000, q: 0.9, gain: 0.05 });
+    [NOTE.D5, NOTE["F#5"], NOTE.A5, NOTE.D6].forEach((freq, i) =>
+      voice(ctx, bus, { freq, at: 0.2 + i * 0.04, attack: 0.006, decay: 0.45, gain: 0.035, pan: -0.3 + i * 0.2 })
+    );
+    voice(ctx, bus, { freq: NOTE.D3, at: 0.2, decay: 0.6, gain: 0.06 });
+  },
+  // نغمة من السلّم — i يصعد بها درجة درجة
+  note(ctx, bus, i = 0) {
+    const freq = SCALE[i % SCALE.length];
+    voice(ctx, bus, { freq, attack: 0.008, decay: 0.4, gain: 0.03, pan: ((i % 5) - 2) * 0.12 });
+    voice(ctx, bus, { freq: freq * 2, attack: 0.004, decay: 0.15, gain: 0.008 });
+  },
 };
 
-function playSound(name) {
-  if (!isSoundEnabled()) return;
+function getAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === "suspended") audioCtx.resume();
-  SOUNDS[name](audioCtx, getSfxBus(audioCtx));
+  return audioCtx;
 }
+
+function playSound(name, arg) {
+  if (!isSoundEnabled()) return;
+  const ctx = getAudio();
+  SOUNDS[name](ctx, getSfxBus(ctx), arg);
+}
+
+// ===== موسيقى خلفية لصفحة هكوله: حلقة حماسية مولّدة بالكود =====
+// 112 نبضة/دقيقة، ري الكبير D - Bm - G - A: باص نابض + أربيجيو، والطبل يدخل
+// بعد مقدمة من مازورتين والفلتر ينفتح تدريجياً (بناء حماس بدل بداية مفاجئة)
+const MUSIC_KEY = "mfv_music_pref";
+const MUSIC_BARS = [
+  { bass: 146.83, arp: [587.33, 739.99, 880] },
+  { bass: 123.47, arp: [493.88, 587.33, 739.99] },
+  { bass: 98.0, arp: [392.0, 493.88, 587.33] },
+  { bass: 110.0, arp: [440.0, 554.37, 659.25] },
+];
+const MUSIC_VOLUME = 0.35;
+let music = null;
+
+function createMusic(ctx) {
+  const master = ctx.createGain();
+  master.gain.value = 0.0001;
+  const opener = ctx.createBiquadFilter();
+  opener.type = "lowpass";
+  master.connect(opener).connect(ctx.destination);
+  const stepDur = 60 / 112 / 4;
+  let step = 0;
+  let next = 0;
+  let timer = null;
+
+  function env(t, dur, gain) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(master);
+    return g;
+  }
+  function tone(type, freq, t, dur, gain, cutoff) {
+    const o = ctx.createOscillator();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    const f = ctx.createBiquadFilter();
+    f.type = "lowpass";
+    f.frequency.value = cutoff;
+    o.connect(f).connect(env(t, dur, gain));
+    o.start(t);
+    o.stop(t + dur + 0.02);
+  }
+  function hit(t, dur, freq, gain) {
+    const src = ctx.createBufferSource();
+    src.buffer = getNoise(ctx);
+    const f = ctx.createBiquadFilter();
+    f.type = "bandpass";
+    f.frequency.value = freq;
+    f.Q.value = 0.7;
+    src.connect(f).connect(env(t, dur, gain));
+    src.start(t, Math.random() * 0.5);
+    src.stop(t + dur + 0.02);
+  }
+  function kick(t) {
+    const o = ctx.createOscillator();
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+    o.connect(env(t, 0.3, 0.9));
+    o.start(t);
+    o.stop(t + 0.32);
+  }
+  function schedule(i, t) {
+    const bar = Math.floor(i / 16);
+    const s = i % 16;
+    const chord = MUSIC_BARS[bar % 4];
+    const drums = bar >= 2;
+    if (drums && s % 4 === 0) kick(t);
+    if (drums && (s === 4 || s === 12)) hit(t, 0.14, 1500, 0.28);
+    if (s % 2 === 1) hit(t, 0.03, 8000, 0.09);
+    if (s % 2 === 0) tone("sawtooth", s % 4 === 2 ? chord.bass * 2 : chord.bass, t, stepDur * 1.6, 0.16, 700);
+    tone("triangle", chord.arp[[0, 1, 2, 1][s % 4]] * (s >= 8 ? 2 : 1), t, stepDur * 1.2, 0.05, 5000);
+  }
+  function pump() {
+    while (next < ctx.currentTime + 0.12) {
+      schedule(step++, next);
+      next += stepDur;
+    }
+  }
+  return {
+    start() {
+      if (timer) return;
+      const now = ctx.currentTime;
+      step = 0;
+      next = now + 0.05;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(MUSIC_VOLUME, now + 1.5);
+      opener.frequency.cancelScheduledValues(now);
+      opener.frequency.setValueAtTime(400, now);
+      opener.frequency.exponentialRampToValueAtTime(12000, now + 8);
+      timer = setInterval(pump, 25);
+      pump();
+    },
+    stop() {
+      if (!timer) return;
+      clearInterval(timer);
+      timer = null;
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.12);
+    },
+  };
+}
+
+// روابط صفحة هكوله (بطاقة الرئيسية، زر القائمة، سطر القائمة): صوت الدخول
+// ثم ننتقل — الانتقال الفوري يقطع الصوت قبل ما يُسمع
+document.addEventListener("click", (e) => {
+  const a = e.target.closest?.('a[href="hakolah-story.html"]');
+  if (!a || e.defaultPrevented || !isSoundEnabled()) return;
+  if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  playSound("hakolah");
+  setTimeout(() => (location.href = a.href), 450);
+});
 
 // أيقونات الأزرار اللي تتغير حالتها وقت التشغيل (نفس مسارات icon.njk)
 const ICONS = {
@@ -145,6 +292,8 @@ const ICONS = {
   "volume-up": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/></svg>',
   "volume-off": '<svg width="22" height="22" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/></svg>',
 };
+
+let onGlobalMute = null;
 
 function initSoundToggle() {
   const btn = document.querySelector(".sound-toggle");
@@ -166,6 +315,7 @@ function initSoundToggle() {
     }
     apply(next);
     if (next) playSound("on");
+    else onGlobalMute?.();
   });
 }
 
@@ -244,7 +394,7 @@ function initWorkStack() {
   function updateCaption() {
     const i = Math.max(0, Math.min(N - 1, Math.round(pos)));
     if (i === shownIndex) return;
-    if (shownIndex !== -1) playSound('tick');
+    if (shownIndex !== -1) playSound(cards[i].classList.contains('stack-card-feature') ? 'shimmer' : 'tick');
     shownIndex = i;
     const num = document.createElement('span');
     num.className = 'num';
@@ -432,6 +582,121 @@ function initWorkStack() {
 
   render();
   updateCaption();
+}
+
+// ===== صفحة قصة هكوله: موسيقى + أصوات تتبع القراءة =====
+function initStoryPage() {
+  const story = document.querySelector('.story');
+  if (!story) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // الموسيقى: تشتغل تلقائياً فقط لمن فعّل الأصوات أو اختارها صراحة من قبل.
+  // المتصفح يمنع الصوت قبل أول تفاعل، فنكمّلها مع أول ضغطة/مفتاح
+  const btn = document.querySelector('.music-toggle');
+  let on;
+  try {
+    const v = localStorage.getItem(MUSIC_KEY);
+    on = v ? v === 'on' : isSoundEnabled();
+  } catch {
+    on = false;
+  }
+  function setBtn() {
+    btn.setAttribute('aria-pressed', String(on));
+    const label = on ? 'إيقاف الموسيقى' : 'تشغيل الموسيقى';
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+  }
+  function play() {
+    const ctx = getAudio();
+    if (!music) music = createMusic(ctx);
+    music.start();
+  }
+  setBtn();
+  if (on) {
+    play();
+    const unlock = () => on && getAudio();
+    ['pointerdown', 'keydown'].forEach((ev) => document.addEventListener(ev, unlock, { once: true, capture: true }));
+  }
+  btn.addEventListener('click', () => {
+    on = !on;
+    try {
+      localStorage.setItem(MUSIC_KEY, on ? 'on' : 'off');
+    } catch {
+      /* وضع خاص — يشتغل لهالزيارة بس */
+    }
+    setBtn();
+    if (on) play();
+    else music?.stop();
+  });
+  onGlobalMute = () => {
+    on = false;
+    setBtn();
+    music?.stop();
+  };
+  // setInterval يتباطأ بالتبويب المخفي فتتقطع الإيقاعات — نوقف ونكمّل
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) music?.stop();
+    else if (on) play();
+  });
+
+  // نغمة صاعدة مع كل عنوان/صورة يدخل الشاشة — القراءة تصير "لحن"
+  let noteIndex = 0;
+  const once = (els, fn, threshold = 0.4) => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        fn(en.target);
+      });
+    }, { threshold });
+    els.forEach((el) => io.observe(el));
+  };
+  once(story.querySelectorAll('h2, .story-shot:not(.story-shot-hero)'), () => playSound('note', noteIndex++));
+
+  // الأرقام تعدّ من صفر مع نقرات، وتنتهي بنغمة نجاح
+  const stats = story.querySelector('.story-stats');
+  const dts = [...stats.querySelectorAll('dt')].map((dt) => {
+    const m = dt.textContent.match(/^(\D*)(\d+)$/);
+    return { dt, prefix: m[1], value: Number(m[2]) };
+  });
+  if (!reduceMotion) {
+    dts.forEach((d) => (d.dt.textContent = d.prefix + '0'));
+    once([stats], () => {
+      const t0 = performance.now();
+      let lastTick = 0;
+      (function frame(now) {
+        const p = Math.min(1, (now - t0) / 1400);
+        const eased = 1 - Math.pow(1 - p, 3);
+        dts.forEach((d) => (d.dt.textContent = d.prefix + Math.round(d.value * eased)));
+        if (now - lastTick > 70 && p < 1) {
+          lastTick = now;
+          playSound('tick');
+        }
+        if (p < 1) requestAnimationFrame(frame);
+        else playSound('success');
+      })(t0);
+    });
+  }
+
+  // الخط الزمني: النقاط تضيء وحدة وحدة مع سلّم صاعد
+  const timeline = story.querySelector('.timeline');
+  if (!reduceMotion) {
+    timeline.classList.add('anim');
+    once([timeline], () => {
+      timeline.querySelectorAll('li').forEach((li, i) =>
+        setTimeout(() => {
+          li.classList.add('lit');
+          playSound('note', i);
+        }, i * 110)
+      );
+    }, 0.2);
+  }
+
+  // بطاقات التقنيات: نغمة مختلفة لكل بطاقة عند مرور الماوس
+  story.querySelectorAll('.tip-card').forEach((card, i) =>
+    card.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && playSound('note', i))
+  );
+  story.querySelectorAll('.btn-hakolah').forEach((b) => b.addEventListener('click', () => playSound('hakolah')));
 }
 
 // ===== Lazy Loading للفيديوهات =====
@@ -951,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initNavToggle();
 
   initWorkStack();
+  initStoryPage();
 
   // تفعيل Lazy Loading للفيديوهات
   initLazyVideos();

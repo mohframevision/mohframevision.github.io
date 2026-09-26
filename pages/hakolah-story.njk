@@ -15,6 +15,10 @@ ogImageWidth: 1600
 ogImageHeight: 900
 twitterCard: "summary_large_image"
 ---
+{% from "icon.njk" import icon %}
+  {# خارج .section: حركة الظهور فيها transform فتصير حاوية للعناصر الثابتة #}
+  <button type="button" class="corner-btn music-toggle" aria-pressed="false" aria-label="تشغيل الموسيقى" title="تشغيل الموسيقى">{{ icon("music-note", 20) }}</button>
+
   <section class="section page-top story">
 
     <!-- الافتتاحية -->
