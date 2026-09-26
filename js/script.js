@@ -681,8 +681,14 @@ function initStoryPage() {
     if (on) play();
     else music?.stop();
   });
+  // الكتم العام يطفي الموسيقى ويحفظها طافية — وإلا ترجع تشتغل مع إعادة التحميل
   onGlobalMute = () => {
     on = false;
+    try {
+      localStorage.setItem(MUSIC_KEY, 'off');
+    } catch {
+      /* وضع خاص */
+    }
     setBtn();
     music?.stop();
   };
