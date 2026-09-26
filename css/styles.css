@@ -342,7 +342,7 @@ main {
   margin: 0 auto 50px;
 }
 
-.section h2.section-gap {
+.section .section-gap {
   margin-top: 80px;
 }
 
@@ -375,6 +375,56 @@ main {
   max-width: 560px;
   margin: 0 auto 30px;
   line-height: 1.9;
+}
+
+/* فقرة افتتاحية أكبر من نص الأقسام العادي */
+.section p.lead {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: clamp(17px, 3.5vw, 20px);
+  line-height: 2;
+}
+
+/* ===== صفحة نقش ===== */
+.naqsh-logo {
+  max-width: 700px;
+}
+
+.naqsh-logo img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  display: block;
+}
+
+.services-grid.naqsh-services {
+  max-width: 1000px;
+  margin: 40px auto 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* خطوات العمل: نفس شكل بطاقات النصائح (tip-card) بصفحة الموارد */
+.steps-grid {
+  --resource-accent: var(--accent);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 40px auto 0;
+  padding: 0 20px;
+}
+
+/* بطاقات ضيقة (4 بعمود) — الرقم فوق العنوان بدل ما ياخذ عمود جانبي */
+.steps-grid .tip-card {
+  padding: 30px 24px;
+  min-height: 0;
+}
+
+.steps-grid .tip-number {
+  position: static;
+  display: inline-block;
+  font-size: 40px;
+  margin-bottom: 12px;
 }
 
 .actions {
@@ -901,6 +951,49 @@ footer {
   padding: 8px 0;
   position: relative;
   padding-right: 20px;
+}
+
+.section .service-card p.service-note {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.service-note a {
+  color: var(--accent);
+}
+
+/* قائمة "لماذا تختارني" — علامة صح بلون الموقع بدل إيموجي ✅ */
+.why-list {
+  list-style: none;
+  text-align: start;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.why-list li {
+  position: relative;
+  padding: 10px 32px 10px 0;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+.why-list li::before {
+  content: "✓";
+  position: absolute;
+  right: 0;
+  top: 10px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.why-list strong {
+  color: var(--text);
+}
+
+.btn.cta-gap {
+  margin-top: 50px;
 }
 
 .service-card li:before {
