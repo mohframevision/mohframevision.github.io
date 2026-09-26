@@ -366,11 +366,25 @@ function cardMatchesSearch(cardText, rawQuery) {
   return queryWords.every(qw => targetWords.some(tw => wordRoughlyMatches(qw, tw)));
 }
 
+// طي الأقسام الطويلة: الصفحة كانت ~17,500px على الجوال. كل قسم يعرض أول
+// عدد من البطاقات مع زر "عرض الكل" — والطي يتعطل وقت البحث أو فلتر المنصة
+// عشان ما تنخفي نتيجة مطابقة خلف الزر
+const expandedResourceSections = new Set();
+const mobileResourcesQuery = window.matchMedia('(max-width: 768px)');
+
+function resourceCollapseLimit() {
+  return mobileResourcesQuery.matches ? 3 : 6;
+}
+
 function applyResourceFilters() {
   const grids = document.querySelectorAll('.resources-grid');
+  const filtering = currentResourceSearch !== '' || currentPlatformFilter !== 'all';
+  const limit = resourceCollapseLimit();
 
   grids.forEach(grid => {
-    let anyVisible = false;
+    const section = grid.closest('.resource-section');
+    const expanded = filtering || (section && expandedResourceSections.has(section.id));
+    let matched = 0;
 
     Array.from(grid.children).forEach(card => {
       const matchesSearch = cardMatchesSearch(card.textContent, currentResourceSearch);
@@ -379,15 +393,46 @@ function applyResourceFilters() {
       const matchesPlatform = !cardPlatform || currentPlatformFilter === 'all' || cardPlatform === currentPlatformFilter;
 
       const visible = matchesSearch && matchesPlatform;
-      card.style.display = visible ? '' : 'none';
-      if (visible) anyVisible = true;
+      if (visible) matched++;
+      card.style.display = visible && (expanded || matched <= limit) ? '' : 'none';
     });
 
-    const section = grid.closest('.resource-section');
     if (section) {
-      section.style.display = anyVisible ? '' : 'none';
+      section.style.display = matched ? '' : 'none';
+    }
+
+    const moreBtn = grid.nextElementSibling;
+    if (moreBtn && moreBtn.classList.contains('resource-more-btn')) {
+      moreBtn.hidden = filtering || matched <= limit;
+      moreBtn.textContent = expanded ? 'عرض أقل' : `عرض الكل (${matched})`;
+      moreBtn.setAttribute('aria-expanded', String(Boolean(expanded)));
     }
   });
+}
+
+function initResourceCollapse() {
+  const grids = document.querySelectorAll('.resources-grid');
+  if (!grids.length) return;
+  grids.forEach(grid => {
+    const section = grid.closest('.resource-section');
+    if (!section || grid.children.length <= 3) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'resource-more-btn';
+    btn.setAttribute('aria-controls', section.id);
+    btn.addEventListener('click', () => {
+      const opening = !expandedResourceSections.has(section.id);
+      if (opening) expandedResourceSections.add(section.id);
+      else expandedResourceSections.delete(section.id);
+      applyResourceFilters();
+      playSound(opening ? 'open' : 'close');
+      // عند الطي نرجع لعنوان القسم — وإلا يبقى الزائر بمكان فاضي تحت
+      if (!opening) section.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    grid.after(btn);
+  });
+  applyResourceFilters();
+  mobileResourcesQuery.addEventListener('change', applyResourceFilters);
 }
 
 function filterCreators(platform) {
@@ -723,6 +768,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // تفعيل طي/فتح تنويه الروابط الخارجية
   initDisclaimerToggle();
+
+  // طي أقسام صفحة الموارد الطويلة
+  initResourceCollapse();
   
   // معالجة نموذج التواصل
   const contactForm = document.getElementById('contactForm');
