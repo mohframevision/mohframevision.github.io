@@ -171,68 +171,133 @@ function playSound(name, arg) {
 }
 
 // ===== موسيقى خلفية لصفحة هكوله: أجواء هادئة مولّدة بالكود =====
-// طلب المالك: هادئة ومحترمة، لا طابع لهو وطرب — فلا إيقاع ولا طبل ولا باص
-// نابض. طبقات صوتية طويلة بطابع وثائقي: كل 8 ثوانٍ وتر من ري الكبير
-// (D - Bm - G - A) يدخل ببطء ويذوب ببطء فوق اللي قبله
+// طلب المالك: هادئة ومحترمة، لا طابع لهو وطرب — فلا إيقاع ولا طبل. ولا
+// تكون مملة: أوتار تتنقل عشوائياً بين 6 (بترتيب موسيقي منطقي) وبأطوال
+// مختلفة، فوقها نغمات جرس متفرقة بتوقيت غير منتظم، وصدى يعطي مساحة
 const MUSIC_KEY = "mfv_music_pref";
-const MUSIC_CHORDS = [
-  [146.83, 220.0, 293.66, 369.99],
-  [123.47, 185.0, 246.94, 293.66],
-  [98.0, 146.83, 196.0, 246.94],
-  [110.0, 164.81, 220.0, 277.18],
-];
-const CHORD_SEC = 8;
-const MUSIC_VOLUME = 0.5;
+const MUSIC_CHORDS = {
+  D: [146.83, 220.0, 293.66, 369.99],
+  Bm: [123.47, 185.0, 246.94, 293.66],
+  G: [98.0, 196.0, 246.94, 293.66],
+  A: [110.0, 164.81, 220.0, 277.18],
+  Em: [164.81, 196.0, 246.94, 329.63],
+  "F#m": [185.0, 220.0, 277.18, 369.99],
+};
+// من كل وتر، الأوتار اللي يحسن الانتقال لها
+const MUSIC_NEXT = {
+  D: ["G", "Bm", "A", "Em"],
+  Bm: ["G", "Em", "A"],
+  G: ["D", "A", "Em", "Bm"],
+  A: ["D", "Bm", "F#m"],
+  Em: ["A", "G", "D"],
+  "F#m": ["Bm", "G"],
+};
+// خماسي ري الكبير — ما فيه نغمة تتنافر مع أي وتر فوق
+const MUSIC_BELLS = [440.0, 493.88, 587.33, 659.25, 739.99, 880.0, 987.77];
+const MUSIC_VOLUME = 1.2;
 let music = null;
 
 function createMusic(ctx) {
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const rand = (a, b) => a + Math.random() * (b - a);
   const master = ctx.createGain();
   master.gain.value = 0.0001;
   const soft = ctx.createBiquadFilter();
   soft.type = "lowpass";
-  soft.frequency.value = 1400;
-  master.connect(soft).connect(ctx.destination);
-  let chord = 0;
-  let next = 0;
+  soft.frequency.value = 1500;
+  // تنفّس بطيء بالنبرة: الفلتر يتموّج كل ~25 ثانية فالصوت ما يثبت على لون واحد
+  const lfo = ctx.createOscillator();
+  lfo.frequency.value = 0.04;
+  const depth = ctx.createGain();
+  depth.gain.value = 500;
+  lfo.connect(depth).connect(soft.frequency);
+  lfo.start();
+  const verb = ctx.createConvolver();
+  verb.buffer = makeRoomImpulse(ctx, 3.5);
+  const wet = ctx.createGain();
+  wet.gain.value = 0.45;
+  master.connect(soft);
+  soft.connect(ctx.destination);
+  soft.connect(verb).connect(wet).connect(ctx.destination);
+
+  let chord = "D";
+  let nextChord = 0;
+  let nextBell = 0;
+  let bell = 3;
   let timer = null;
 
-  // نغمة طويلة: مذبذبين متباعدين قليلاً (دفء بدل صوت إلكتروني حاد)،
-  // دخول 3 ثوانٍ وخروج 4 — فتتداخل الأوتار بلا حد فاصل
-  function pad(freq, t, len, gain) {
+  function out(pan) {
+    if (!pan || !ctx.createStereoPanner) return master;
+    const p = ctx.createStereoPanner();
+    p.pan.value = pan;
+    p.connect(master);
+    return p;
+  }
+  // وتر طويل: مثلثي ناعم، دخول 3 ثوانٍ وخروج 4 — يتداخل مع اللي بعده
+  function pad(freq, t, len, gain, pan) {
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(gain, t + 3);
     g.gain.setValueAtTime(gain, t + len - 4);
     g.gain.linearRampToValueAtTime(0, t + len);
-    g.connect(master);
-    [-3, 3].forEach((cents) => {
+    g.connect(out(pan));
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = freq;
+    o.connect(g);
+    o.start(t);
+    o.stop(t + len + 0.05);
+  }
+  // نغمة جرس: ضربة ناعمة وذيل طويل، مع توافقية خفيفة فوقها
+  function chime(freq, t, gain, pan) {
+    [
+      [1, gain, 2.8],
+      [2, gain * 0.25, 1.2],
+    ].forEach(([mul, g0, dur]) => {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(g0, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      g.connect(out(pan));
       const o = ctx.createOscillator();
-      o.type = "sine";
-      o.frequency.value = freq;
-      o.detune.value = cents;
+      o.frequency.value = freq * mul;
       o.connect(g);
       o.start(t);
-      o.stop(t + len + 0.05);
+      o.stop(t + dur + 0.05);
     });
   }
-  function schedule(i, t) {
-    const notes = MUSIC_CHORDS[i % MUSIC_CHORDS.length];
-    notes.forEach((f, k) => pad(f, t, CHORD_SEC + 3, 0.05 - k * 0.008));
-    // لمعة خفيفة واحدة بالأعلى بمنتصف كل وتر
-    pad(notes[notes.length - 1] * 2, t + 2, 6, 0.012);
+  function scheduleChord(t) {
+    const len = rand(7, 11);
+    // أحياناً نشيل النغمة الأوطى — تخفيف للطنين وتنويع باللون
+    MUSIC_CHORDS[chord].forEach((f, k) => {
+      if (k === 0 && Math.random() < 0.3) return;
+      pad(f, t, len + 3, 0.045 - k * 0.007, (k - 1.5) * 0.2);
+    });
+    chord = pick(MUSIC_NEXT[chord]);
+    return len;
+  }
+  function scheduleBell(t) {
+    // مشي عشوائي بخطوة أو خطوتين، وأحياناً سكوت
+    if (Math.random() < 0.8) {
+      bell = Math.max(0, Math.min(MUSIC_BELLS.length - 1, bell + pick([-2, -1, 1, 2])));
+      chime(MUSIC_BELLS[bell], t, rand(0.012, 0.022), rand(-0.4, 0.4));
+      // ومرات نغمة ثانية قريبة وراها
+      if (Math.random() < 0.25) chime(MUSIC_BELLS[Math.min(MUSIC_BELLS.length - 1, bell + 2)], t + rand(0.25, 0.5), 0.01, rand(-0.4, 0.4));
+    }
+    return rand(1.6, 4.5);
   }
   function pump() {
-    while (next < ctx.currentTime + 1) {
-      schedule(chord++, next);
-      next += CHORD_SEC;
-    }
+    const horizon = ctx.currentTime + 1;
+    while (nextChord < horizon) nextChord += scheduleChord(nextChord);
+    while (nextBell < horizon) nextBell += scheduleBell(nextBell);
   }
   return {
     start() {
       if (timer) return;
       const now = ctx.currentTime;
-      chord = 0;
-      next = now + 0.05;
+      chord = "D";
+      nextChord = now + 0.05;
+      nextBell = now + 3;
       master.gain.cancelScheduledValues(now);
       master.gain.setValueAtTime(0.0001, now);
       master.gain.exponentialRampToValueAtTime(MUSIC_VOLUME, now + 2);
