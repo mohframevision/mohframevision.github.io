@@ -100,6 +100,8 @@
   <header class="nav">
     <div class="nav-inner">
       <a class="nav-tile nav-brand" href="index.html"{% if navActive == "index.html" %} aria-current="page"{% endif %}>Mohamed Frame Vision</a>
+      {# خارج القائمة المطوية: هكوله ظاهر دائماً حتى بالجوال #}
+      <a class="nav-tile nav-hakolah" href="hakolah-story.html"{% if navActive == "hakolah-story.html" %} aria-current="page"{% endif %}>هكوله</a>
       <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
         {% for item in site.nav %}{% if item.href != "index.html" %}
         <a class="nav-tile{% if item.href == navActive %} active{% endif %}" href="{{ item.href }}"{% if item.href == navActive %} aria-current="page"{% endif %}>{{ item.label }}</a>

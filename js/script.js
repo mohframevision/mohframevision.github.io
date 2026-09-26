@@ -347,8 +347,9 @@ function initWorkStack() {
   });
 
   cards.forEach((card, i) => {
-    card.addEventListener('click', () => {
-      if (drag?.moved) return;
+    card.addEventListener('click', (e) => {
+      if (drag?.moved) return e.preventDefault();
+      if (card.href) return; // بطاقة هكوله رابط لصفحة قصته
       openLightbox(i);
     });
     // التنقل بـTab يجيب البطاقة للمقدمة

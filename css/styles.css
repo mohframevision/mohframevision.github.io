@@ -172,7 +172,7 @@ main {
 }
 
 /* الشاشات الأضيق: البلاطات ما تكفي بسطر — اسم + زر قائمة، والروابط تنزل */
-@media (max-width: 1180px) {
+@media (max-width: 1250px) {
   .nav-toggle {
     display: flex;
   }
@@ -2040,4 +2040,202 @@ img[loading="lazy"].loaded {
   font-size: 14px;
   color: var(--text-dim);
   letter-spacing: 0;
+}
+
+/* ===== هكوله: أبرز الأعمال ===== */
+/* أخضر هكوله (نفس لون الوضع الداكن بموقعه) — تباين ~6.9:1 على الأسود */
+:root {
+  --hakolah: #3fa480;
+}
+
+.nav-hakolah {
+  color: var(--text);
+  border-color: color-mix(in oklch, var(--hakolah) 55%, transparent);
+  gap: 8px;
+}
+
+.nav-hakolah::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--hakolah);
+  box-shadow: 0 0 10px var(--hakolah);
+}
+
+.nav-hakolah:hover,
+.nav-hakolah[aria-current="page"] {
+  border-color: var(--hakolah);
+}
+
+@media (max-width: 1250px) {
+  .nav-hakolah {
+    min-width: 0;
+    padding-inline: 14px;
+    align-items: center;
+    padding-bottom: 0;
+    font-size: 14px;
+  }
+
+  .nav-hakolah::before {
+    margin-bottom: 0;
+  }
+}
+
+.stack-card-feature {
+  display: block;
+  border-color: var(--hakolah);
+}
+
+.stack-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--hakolah);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.story .tip-card h3 {
+  color: var(--hakolah);
+}
+
+.btn-hakolah {
+  border-color: var(--hakolah);
+}
+
+.btn-hakolah:hover {
+  background: var(--hakolah);
+  border-color: var(--hakolah);
+  color: #000;
+}
+
+.section .story-kicker {
+  color: var(--hakolah);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.story-shot {
+  margin: 60px auto 0;
+  max-width: 1100px;
+}
+
+.story-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+}
+
+.story-shot figcaption {
+  margin-top: 12px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.story-pair {
+  display: grid;
+  grid-template-columns: 1fr 2.2fr;
+  gap: 24px;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.story-pair .story-shot {
+  margin-top: 60px;
+}
+
+.story-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  max-width: 900px;
+  margin: 60px auto 0;
+}
+
+.story-stats div {
+  padding: 26px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.story-stats dt {
+  font-family: var(--font-latin);
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 300;
+  direction: ltr;
+}
+
+.story-stats dd {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.story-text {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: start;
+}
+
+.story-text p + p {
+  margin-top: 18px;
+}
+
+.timeline {
+  list-style: none;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: start;
+  border-inline-start: 1px solid var(--border-strong);
+}
+
+.timeline li {
+  position: relative;
+  padding: 0 28px 30px 0;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hakolah);
+}
+
+.timeline time {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.timeline p {
+  margin-top: 4px;
+}
+
+@media (max-width: 700px) {
+  .story-pair {
+    grid-template-columns: 1fr;
+  }
+
+  .story-pair .story-shot:first-child {
+    max-width: 280px;
+  }
+
+  .story-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

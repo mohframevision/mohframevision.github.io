@@ -43,8 +43,13 @@ schemaJSON: |
        والضغط يفتح الفيديو. البطاقات أزرار حقيقية (لوحة المفاتيح/قارئ الشاشة) -->
   <section class="stack-stage" aria-label="أعمالي">
     <div class="stack" id="workStack">
+      {# هكوله أول بطاقة: أبرز أعمالي — رابط لصفحة قصته بدل مشغّل الفيديو #}
+      <a class="stack-card stack-card-feature" href="hakolah-story.html" data-index="0" data-title="هكوله — أفضل أعمالي حتى الآن">
+        <img src="images/hakolah/home-desktop.jpg" alt="" width="1600" height="900" decoding="async" fetchpriority="high">
+        <span class="stack-badge">المشروع الأبرز</span>
+      </a>
       {% for p in projectList %}
-      <button type="button" class="stack-card" data-index="{{ loop.index0 }}" data-youtube="{{ p.youtubeId }}" data-title="{{ p.title }}" data-desc="{{ p.description }}" aria-label="{{ p.title }} — تشغيل الفيديو">
+      <button type="button" class="stack-card" data-index="{{ loop.index }}" data-youtube="{{ p.youtubeId }}" data-title="{{ p.title }}" data-desc="{{ p.description }}" aria-label="{{ p.title }} — تشغيل الفيديو">
         <img src="https://i.ytimg.com/vi/{{ p.youtubeId }}/hqdefault.jpg" alt="" width="480" height="360" decoding="async"{% if loop.index0 > 5 %} loading="lazy"{% endif %}>
       </button>
       {% endfor %}
@@ -59,9 +64,14 @@ schemaJSON: |
   <!-- عرض القائمة (INDEX): روابط يوتيوب حقيقية، تشتغل بلا جافاسكربت -->
   <div class="stack-index" id="stackIndex" hidden>
     <ol>
+      <li><a href="hakolah-story.html">
+        <span class="stack-index-num">01</span>
+        <span class="stack-index-title">هكوله — المشروع الأبرز</span>
+        <span class="stack-index-desc">دليل بحريني بنيته بالكلمات عبر Claude Code — قصته ومحطاته</span>
+      </a></li>
       {% for p in projectList %}
-      <li><a href="https://www.youtube.com/watch?v={{ p.youtubeId }}" target="_blank" rel="noopener" data-index="{{ loop.index0 }}">
-        <span class="stack-index-num">{{ ("0" + loop.index) if loop.index < 10 else loop.index }}</span>
+      <li><a href="https://www.youtube.com/watch?v={{ p.youtubeId }}" target="_blank" rel="noopener" data-index="{{ loop.index }}">
+        <span class="stack-index-num">{{ ("0" + (loop.index + 1)) if loop.index < 9 else loop.index + 1 }}</span>
         <span class="stack-index-title">{{ p.title }}</span>
         <span class="stack-index-desc">{{ p.description }}</span>
       </a></li>

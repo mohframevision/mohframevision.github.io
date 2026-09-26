@@ -6,6 +6,7 @@ module.exports = function (eleventyConfig) {
   // نسخ الصور المستخدمة فعلياً فقط (تجنب نسخ الملفات الخام الكبيرة غير المستخدمة)
   eleventyConfig.addPassthroughCopy("images/og-image.png");
   eleventyConfig.addPassthroughCopy("images/naqsh/naqsh-hero.jpg");
+  eleventyConfig.addPassthroughCopy("images/hakolah");
 
   eleventyConfig.addPassthroughCopy("favicon.svg");
   eleventyConfig.addPassthroughCopy("favicon.ico");
