@@ -74,10 +74,11 @@
   {% endif %}
 
   <!-- خطوط "سويسرية" محايدة بروح Unveil/Avara: Inter للاتيني و IBM Plex
-       Sans Arabic للعربي (نفس العائلة الشكلية، الاثنين مجانيين) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+       Sans Arabic للعربي (نفس العائلة الشكلية، الاثنين مجانيين).
+       مستضافة عندنا لا من خوادم Google — التحميل المباشر من
+       fonts.googleapis.com يرسل IP كل زائر لجوجل بلا إذن قبل أي شي ثاني
+       بالصفحة (قضت محكمة ألمانية بتعويض زائر واحد بسبب هذا بالضبط). -->
+  <link rel="stylesheet" href="css/fonts.css?v={{ buildTime }}">
 
   <!-- Stylesheet -->
   {# بالتطوير (eleventy --serve) الملف الأصلي مباشرة: styles.min.css ما
