@@ -1,0 +1,6 @@
+Recorded samples used by the music on hakolah-story.html (both CC0)
+
+strings/  VSCO 2 Community Edition — Sam Gossner / Versilian Studios — CC0
+          https://github.com/sgossner/VSCO-2-CE
+celesta/  "A Sampled Celesta" — Neil Bickford — samples CC0
+          https://gitlab.com/Nbickford/a-sampled-celesta

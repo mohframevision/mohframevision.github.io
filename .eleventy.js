@@ -2,6 +2,7 @@ module.exports = function (eleventyConfig) {
   // نسخ الملفات كما هي بدون معالجة
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("js");
+  eleventyConfig.addPassthroughCopy("audio");
 
   // نسخ الصور المستخدمة فعلياً فقط (تجنب نسخ الملفات الخام الكبيرة غير المستخدمة)
   eleventyConfig.addPassthroughCopy("images/og-image.png");

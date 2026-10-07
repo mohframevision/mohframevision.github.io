@@ -202,6 +202,60 @@ const MUSIC_VOLUME = 1.2;
 const MUSIC_LEVEL_KEY = "mfv_music_level";
 let music = null;
 let musicLevel = 0.7;
+// آلات حقيقية مسجّلة (CC0، انظر audio/CREDITS.txt): وتريات للخلفية وتشيليستا للأجراس.
+// قبل ما توصل الملفات (أو بلا اتصال) تعزف الموسيقى بالأصوات المولّدة كما كانت
+const MUSIC_SAMPLES = {
+  strings: { G2: 98.0, D3: 146.83, G3: 196.0, A3: 220.0, D4: 293.66 },
+  celesta: { A4: 440.0, C5: 523.25, Ds5: 622.25, Fs5: 739.99, A5: 880.0, C6: 1046.5 },
+};
+const musicBank = { strings: [], celesta: [] };
+let musicBankLoading = null;
+
+function loadMusicSamples(ctx) {
+  musicBankLoading ??= Promise.all(
+    Object.entries(MUSIC_SAMPLES).flatMap(([set, notes]) =>
+      Object.entries(notes).map(([n, freq]) =>
+        fetch(`audio/${set}/${n}.mp3`)
+          .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
+          .then((b) => ctx.decodeAudioData(b))
+          .then((buf) => {
+            const loop = set === "strings" ? smoothLoop(buf) : null;
+            // مستوى كل نغمة مسجّلة يختلف: نسوّيها على مستوى المذبذب اللي تحل محله
+            // (مثلثي ‎≈0.58 للوتريات، وضربة الجرس ‎≈0.7)
+            const d = buf.getChannelData(0);
+            const a = Math.round((loop ? loop.start : 0) * buf.sampleRate);
+            const n = Math.round((loop ? loop.end - loop.start : 0.3) * buf.sampleRate);
+            let sum = 0;
+            for (let i = a; i < a + n; i++) sum += d[i] * d[i];
+            const norm = (loop ? 0.58 : 0.7) / (Math.sqrt(sum / n) || 1);
+            musicBank[set].push({ buf, freq, loop, norm });
+          })
+          .catch(() => {}),
+      ),
+    ),
+  );
+  return musicBankLoading;
+}
+// حلقة بلا نقرة لنغمة الوتريات: بعد الهجمة لآخر الملف، بتلاشٍ متقاطع ربع ثانية
+function smoothLoop(buf) {
+  const d = buf.getChannelData(0);
+  const sr = buf.sampleRate;
+  const xf = Math.round(0.25 * sr);
+  const to = d.length - Math.round(0.3 * sr);
+  const from = Math.round(0.8 * sr);
+  if (to - from < xf + 0.4 * sr) return null;
+  for (let i = 0; i < xf; i++) {
+    const t = (i / xf) * (Math.PI / 2);
+    d[to - xf + i] = d[to - xf + i] * Math.cos(t) + d[from - xf + i] * Math.sin(t);
+  }
+  return { start: from / sr, end: to / sr };
+}
+// أقرب عيّنة للنغمة المطلوبة (بالنسبة لا بالفرق)
+function nearestSample(set, freq) {
+  let best = null;
+  for (const smp of musicBank[set]) if (!best || Math.abs(Math.log(freq / smp.freq)) < Math.abs(Math.log(freq / best.freq))) best = smp;
+  return best;
+}
 
 function createMusic(ctx) {
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -242,14 +296,28 @@ function createMusic(ctx) {
     p.connect(master);
     return p;
   }
-  // وتر طويل: مثلثي ناعم، دخول 3 ثوانٍ وخروج 4 — يتداخل مع اللي بعده
+  // وتر طويل: وتريات حقيقية (أو مثلثي ناعم)، دخول 3 ثوانٍ وخروج 4 — يتداخل مع اللي بعده
   function pad(freq, t, len, gain, pan) {
+    const smp = nearestSample("strings", freq);
+    if (smp?.loop) gain *= smp.norm;
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(gain, t + 3);
     g.gain.setValueAtTime(gain, t + len - 4);
     g.gain.linearRampToValueAtTime(0, t + len);
     g.connect(out(pan));
+    if (smp?.loop) {
+      const src = ctx.createBufferSource();
+      src.buffer = smp.buf;
+      src.playbackRate.value = freq / smp.freq;
+      src.loop = true;
+      src.loopStart = smp.loop.start;
+      src.loopEnd = smp.loop.end;
+      src.connect(g);
+      src.start(t);
+      src.stop(t + len + 0.05);
+      return;
+    }
     const o = ctx.createOscillator();
     o.type = "triangle";
     o.frequency.value = freq;
@@ -259,6 +327,20 @@ function createMusic(ctx) {
   }
   // نغمة جرس: ضربة ناعمة وذيل طويل، مع توافقية خفيفة فوقها
   function chime(freq, t, gain, pan) {
+    const smp = nearestSample("celesta", freq);
+    if (smp) {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(gain * smp.norm, t);
+      g.gain.setTargetAtTime(0.0001, t + 2.4, 0.4);
+      g.connect(out(pan));
+      const src = ctx.createBufferSource();
+      src.buffer = smp.buf;
+      src.playbackRate.value = freq / smp.freq;
+      src.connect(g);
+      src.start(t);
+      src.stop(t + 4);
+      return;
+    }
     [
       [1, gain, 2.8],
       [2, gain * 0.25, 1.2],
@@ -662,7 +744,9 @@ function initStoryPage() {
   function play() {
     const ctx = getAudio();
     if (!music) music = createMusic(ctx);
-    music.start();
+    // ننتظر الآلات الحقيقية لحد ثانيتين، وإلا نبدأ بالمولّدة وتدخل العيّنات لما توصل
+    const wait = new Promise((r) => setTimeout(r, 2000));
+    Promise.race([loadMusicSamples(ctx), wait]).then(() => on && music.start());
   }
   setBtn();
   if (on) {
